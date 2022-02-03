@@ -12,6 +12,7 @@
 
 
 //Pedro Vitor Melo Bitencourt
+//Site texturas: https://www.solarsystemscope.com/textures/
 
 GLfloat angle, fAspect;
 
