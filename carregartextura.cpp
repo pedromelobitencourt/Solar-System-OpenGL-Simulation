@@ -95,15 +95,15 @@ namespace {
 	};
 }
 
-Textura* carregarImagemBMP(const char* filename) {
+Textura* carregarImagemBMP(const char* nomeArquivo) {
 	ifstream entradaArquivo;
-	entradaArquivo.open(filename, ifstream::binary);
-	assert(!entradaArquivo.fail() || !"Could not find file");
+	entradaArquivo.open(nomeArquivo, ifstream::binary);
+	assert(!entradaArquivo.fail() || !"Nao foi encontrado o arquivo. Tente novamente\n");
 	char buffer[2];
 	entradaArquivo.read(buffer, 2);
-	assert(buffer[0] == 'B' && buffer[1] == 'M' || !"Not a bitmap file");
+	assert(buffer[0] == 'B' && buffer[1] == 'M' || !"Nao e um arquivo BMP\n");
 	entradaArquivo.ignore(8);
-	int infoForaDoConjunto = lerOsBytesComoInteiro(entradaArquivo); ///
+	int infoForaDoConjunto = lerOsBytesComoInteiro(entradaArquivo);
 
 
     //Lendo informações da entrada
