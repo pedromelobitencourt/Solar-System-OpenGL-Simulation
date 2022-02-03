@@ -512,7 +512,7 @@ void Inicializa (void){
 	glEnable(GL_COLOR_MATERIAL);
 
 	Textura* solTextura = carregarImagemBMP("Sol.bmp");	texturaDoSol = carregaTextura(solTextura);	delete solTextura;
-	Textura* estrelaTextura = carregarImagemBMP("stars.bmp");	texturaDasEstrelas = carregaTextura(estrelaTextura);	delete estrelaTextura;
+	Textura* estrelaTextura = carregarImagemBMP("Estrelas_SkyBoxes.bmp");	texturaDasEstrelas = carregaTextura(estrelaTextura);	delete estrelaTextura;
 
     sol.distanciaAteOSol = 0;
     sol.inclinacaoX = 0;
