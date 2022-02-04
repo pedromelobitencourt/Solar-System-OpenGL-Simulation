@@ -56,6 +56,8 @@ bool estaPausado = false;
 
 bool mostrarNomesPlanetas = false;
 
+///Visitar os planetas
+
 bool olharMercurio = false;
 bool olharVenus = false;
 bool olharTerra = false;
@@ -64,6 +66,8 @@ bool olharJupiter = false;
 bool olharSaturno = false;
 bool olharUranos = false;
 bool olharNetuno = false;
+
+///
 
 bool verOrbitas = true;
 
@@ -429,7 +433,7 @@ void desenharEsfera(double raio, double distancia, double inclinacaoX, double an
         gluSphere(quadric, raio, 20, 20);
         glDisable(GL_TEXTURE_2D);
     }
-    /*else if(strcmp(nome, "Marte") == 0){
+    /*else if(strcmp(nome, "Marte") == 0){ //Tentei fazer marte ter uma atmosfera, mas a imagem da atmosfera que achei não tinha intensidade de 24 bits
         GLUquadric *quadric = gluNewQuadric();
         glEnable(GL_TEXTURE_2D);
         glColor3f(1.0, 1.0, 1.0);
@@ -464,7 +468,8 @@ void desenharEsfera(double raio, double distancia, double inclinacaoX, double an
         glutSolidSphere(raio, 180, 180);
     }
 
-    //Júpiter, Netuno e Urano
+    ///Desenhando os anéis dos planetas
+
     if(strcmp(nome, "Saturno") == 0){
         glColor3f(0.5, 0.35, 0.15);
         //glRotatef(90, 1, 0, 0);
@@ -521,7 +526,7 @@ void escreverNaTela(){
     glLoadIdentity();
     glColor3f(1.0, 1.0, 1.0);
     glRasterPos2f(200, 200);
-    char texte[] = "Eita";
+    char texte[] = "Eita"; //Testando
     for(int i = 0; i < strlen(texte); i++){
         glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, texte[i]);
     }
@@ -530,10 +535,6 @@ void escreverNaTela(){
     glPopMatrix();
     glMatrixMode(GL_MODELVIEW);
     glPopMatrix();
-
-    //glEnable(GL_TEXTURE_2D);
-    //glutSwapBuffers();
-    //glutPostRedisplay();
 }
 
 void desenharOrbitas(){
@@ -594,8 +595,6 @@ void Desenha(void)
 
 // Inicializa parâmetros de rendering
 void Inicializa (void){
-//raio, distancia, orbita, velocidadeOrbita, InclinacaoX, inclinaçãoY
-    //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glEnable(GL_DEPTH_TEST);
 
@@ -675,8 +674,6 @@ void Inicializa (void){
     marte.nome = "Marte";
     marte.velocidadeRotacao = 23.328;
 
-    //raio, distancia, orbita, velocidadeOrbita, InclinacaoX, inclinaçãoY
-
     jupiter.distanciaAteOSol = 28;
     jupiter.inclinacaoX = 3.13;
     jupiter.raio = 3.5;
@@ -713,7 +710,13 @@ void Inicializa (void){
     netuno.nome = "Netuno";
     netuno.velocidadeRotacao = 36.45;
 
-    ///
+    /// Asteroides
+
+    //A distância dos asteroides deve ficar entre dois planetas - Talvez vao ter que aumentar a distância do sol de alguns planetas
+    //Bom ter rotações diferentes para não ter muito asteroide sincronizado
+    //Tipo1 => Icosaedro
+    //Tipo2 => Dodecaedro
+    //Tipo3 => Octaedro
 
     asteroide1.distancia = (marte.distanciaAteOSol + jupiter.distanciaAteOSol)/2;
     asteroide1.rotacao = 0;
@@ -882,6 +885,19 @@ void ligaDesligaMudaIluminacao(){
 
             anguloFonteDeLuz = 120;
             atenuacaoDaIluminacao = 0.75;
+
+            glLightfv(GL_LIGHT0, GL_SPECULAR, iluminacaoDifusaEEspecular);
+            glLightfv(GL_LIGHT0, GL_AMBIENT, iluminacaoAmbiente);
+            glLightfv(GL_LIGHT0, GL_DIFFUSE, iluminacaoDifusaEEspecular);
+
+            glLightModelfv(GL_LIGHT_MODEL_AMBIENT, iluminacaoEmissiva);
+            glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE);
+            glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
+
+            glLightfv(GL_LIGHT0, GL_POSITION, posicaoDaIluminacao);
+            glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, direcaoDaLuzNaIluminacao);
+            glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, anguloFonteDeLuz);
+            glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, atenuacaoDaIluminacao);
         }
         else if(tipoIluminacao == 1){
             printf("Chegou iluminacao 1");
@@ -911,6 +927,19 @@ void ligaDesligaMudaIluminacao(){
 
             anguloFonteDeLuz = 100;
             atenuacaoDaIluminacao = 1;
+
+            glLightfv(GL_LIGHT0, GL_SPECULAR, iluminacaoDifusaEEspecular);
+            glLightfv(GL_LIGHT0, GL_AMBIENT, iluminacaoAmbiente);
+            glLightfv(GL_LIGHT0, GL_DIFFUSE, iluminacaoDifusaEEspecular);
+
+            glLightModelfv(GL_LIGHT_MODEL_AMBIENT, iluminacaoEmissiva);
+            glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE);
+            glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
+
+            glLightfv(GL_LIGHT0, GL_POSITION, posicaoDaIluminacao);
+            glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, direcaoDaLuzNaIluminacao);
+            glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, anguloFonteDeLuz);
+            glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, atenuacaoDaIluminacao);
         }
         else if(tipoIluminacao == 2){
             printf("Chegou iluminacao 2");
@@ -935,11 +964,25 @@ void ligaDesligaMudaIluminacao(){
             posicaoDaIluminacao[3] = 0;
 
             direcaoDaLuzNaIluminacao[0] = 1;
-            direcaoDaLuzNaIluminacao[1] = 0;
-            direcaoDaLuzNaIluminacao[2] = 0;
+            direcaoDaLuzNaIluminacao[1] = 1;
+            direcaoDaLuzNaIluminacao[2] = 1;
 
             anguloFonteDeLuz = 120;
             atenuacaoDaIluminacao = 0.75;
+
+            glLightfv(GL_LIGHT0, GL_SPECULAR, iluminacaoDifusaEEspecular);
+            glLightfv(GL_LIGHT0, GL_AMBIENT, iluminacaoAmbiente);
+            glLightfv(GL_LIGHT0, GL_DIFFUSE, iluminacaoDifusaEEspecular);
+
+            glLightModelfv(GL_LIGHT_MODEL_AMBIENT, iluminacaoEmissiva);
+            glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE);
+            glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
+
+            glLightfv(GL_LIGHT0, GL_POSITION, posicaoDaIluminacao);
+            glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, direcaoDaLuzNaIluminacao);
+            glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, anguloFonteDeLuz);
+            glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, atenuacaoDaIluminacao);
+
         }
     }
     else if(!iluminacaoEstaLigada && comLuzDoSolOn == true){
@@ -958,35 +1001,38 @@ void ligaDesligaMudaIluminacao(){
         iluminacaoEmissiva[2] = 0.5;
         iluminacaoEmissiva[3] = 1;
 
-        posicaoDaIluminacao[0] = 1;
+        posicaoDaIluminacao[0] = 0;
         posicaoDaIluminacao[1] = 1;
-        posicaoDaIluminacao[2] = 1;
+        posicaoDaIluminacao[2] = 0;
         posicaoDaIluminacao[3] = 0;
 
         direcaoDaLuzNaIluminacao[0] = 0;
-        direcaoDaLuzNaIluminacao[1] = 10;
+        direcaoDaLuzNaIluminacao[1] = 1;
         direcaoDaLuzNaIluminacao[2] = 0;
 
-        anguloFonteDeLuz = 120;
-        atenuacaoDaIluminacao = 3;
+        anguloFonteDeLuz = 220;
+        atenuacaoDaIluminacao = 0.3785;
+
+        glLightfv(GL_LIGHT0, GL_SPECULAR, iluminacaoDifusaEEspecular);
+        glLightfv(GL_LIGHT0, GL_AMBIENT, iluminacaoAmbiente);
+        glLightfv(GL_LIGHT0, GL_DIFFUSE, iluminacaoDifusaEEspecular);
+
+        glLightModelfv(GL_LIGHT_MODEL_AMBIENT, iluminacaoEmissiva);
+        glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE);
+        glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
+
+        glLightfv(GL_LIGHT0, GL_POSITION, posicaoDaIluminacao);
+        glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, direcaoDaLuzNaIluminacao);
+        glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, anguloFonteDeLuz);
+        glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, atenuacaoDaIluminacao);
+
     }
     else if(!iluminacaoEstaLigada && !comLuzDoSolOn){
         glDisable(GL_LIGHTING);
         glDisable(GL_LIGHT0);
     }
 
-    glLightfv(GL_LIGHT0, GL_SPECULAR, iluminacaoDifusaEEspecular);
-    glLightfv(GL_LIGHT0, GL_AMBIENT, iluminacaoAmbiente);
-    glLightfv(GL_LIGHT0, GL_DIFFUSE, iluminacaoDifusaEEspecular);
 
-    glLightModelfv(GL_LIGHT_MODEL_AMBIENT, iluminacaoEmissiva);
-    glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE);
-    glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
-
-    glLightfv(GL_LIGHT0, GL_POSITION, posicaoDaIluminacao);
-    glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, direcaoDaLuzNaIluminacao);
-    glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, anguloFonteDeLuz);
-    glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, atenuacaoDaIluminacao);
 
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
@@ -1041,6 +1087,7 @@ void Animacao(int periodo){
     desenharOrbitas();
 
 
+    //Deslocamento para camera 4
     if(camera4Ligada == true && (posicaoCameraX != posicaoCamera4X || posicaoCameraY != posicaoCamera4Y || posicaoCameraZ != posicaoCamera4Z)){
             if(posicaoCameraX < posicaoCamera4X){
                 posicaoCameraX += incrementoX;
@@ -1062,6 +1109,7 @@ void Animacao(int periodo){
             }
         }
 
+        //Deslocamento para camera 1
         if(camera1Ligada == true && (posicaoCameraX != posicaoCamera1X || posicaoCameraY != posicaoCamera1Y || posicaoCameraZ != posicaoCamera1Z)){
             if(posicaoCameraX < posicaoCamera1X){
                 posicaoCameraX += incrementoX;
@@ -1083,6 +1131,7 @@ void Animacao(int periodo){
             }
         }
 
+        //Deslocamento para camera 2
         if(camera2Ligada == true && (posicaoCameraX != posicaoCamera2X || posicaoCameraY != posicaoCamera2Y || posicaoCameraZ != posicaoCamera2Z)){
             if(posicaoCameraX < posicaoCamera2X){
                 posicaoCameraX += incrementoX;
@@ -1244,7 +1293,7 @@ void teclado(unsigned char key, int x, int y) {
            }
         break;
 
-       case 52: //1
+       case 52: //4
             if(olharMercurio){
                 olharMercurio = false;
             }
@@ -1316,6 +1365,7 @@ int main(int argc, char** argv)
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA |GLUT_DEPTH);
 	glutInitWindowSize(750, 500);
 	glutCreateWindow("Visualizacao 3D");
+	glShadeModel(GL_SMOOTH);
 	Inicializa();
 	glutDisplayFunc(Desenha);
 	glutReshapeFunc(AlteraTamanhoJanela);
