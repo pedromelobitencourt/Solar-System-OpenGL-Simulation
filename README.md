@@ -1,19 +1,32 @@
 # TP2_ultimasAlteracoesNaoOficiais
 
+## Pedro Vitor Melo Bitencourt
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ## Abrir o projeto
 
 1°: Cria um projeto tipo glut no CodeBlocks
+
 2°: Na main do projeto criado, cole o código de alguma main do projeto
+
 3°: Crie um arquivo denominado "carregartextura.h"
+
 4°: Vai perguntar se esse arquivo pertence ao projeto que está aberto. Marque "Sim"
+
 5°: Cole o código do arquivo "carregartextura.h" que está neste repositório do github
+
 6°: Crie um arquivo denominado "carregartextura.cpp"
-7°: Cole o código do arquivo "carregartextura.cpp" que está neste repositório do github no arquivo "carregartextura.cpp" criado no projeto
-8°: Baixe as imagens "Sol.bmp" e "Estrelas_SkyBoxes.bmp"
-9°: Cole as imagens na pasta do executável do projeto // Normalmente em PastaDoProjeto -> Bin -> Debug
-10°: Compile e execute o programa
+
+7°: Vai perguntar se esse arquivo pertence ao projeto que está aberto. Marque "Sim"
+
+8°: Cole o código do arquivo "carregartextura.cpp" que está neste repositório do github no arquivo "carregartextura.cpp" criado no projeto
+
+9°: Baixe as imagens "Sol.bmp" e "Estrelas_SkyBoxes.bmp"
+
+10°: Cole as imagens na pasta do executável do projeto // Normalmente em PastaDoProjeto -> Bin -> Debug
+
+11°: Compile e execute o programa
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
