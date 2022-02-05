@@ -3,13 +3,12 @@
 #include <gl/glut.h>
 #include <stdio.h>
 #include <string.h>
-#include <math.h> //Tava tentando usar para camera mover junto com o planeta escolhido
+#include <math.h>
 #include "carregartextura.h"
 
 #define LARGURA 750
 #define ALTURA 500
 #define INCREMENTO_PLANO 0.7
-
 
 //Pedro Vitor Melo Bitencourt
 //Site texturas: https://www.solarsystemscope.com/textures/
@@ -24,25 +23,92 @@
 '2' -> Ver ou desver Venus
 'z' -> Mostrar ou esconder os nomes dos planetas
 'p' -> Pausar ou despausar a animação
-
 'F1' -> Mexer a câmera Y
 'F2' -> Mexer a câmera Y
-
 'PAGE UP' -> Mexer a câmera X
 'PAGE DOWN' -> Mexer a câmera X
-
 'END' -> Mexer a câmera Z
 'HOME' -> Mexer a câmera Z
-
 'UP' -> Camera1
 'DOWN' -> Camera4
 'LEFT' -> Camera2
 'RIGHT' -> Camera3 //Tem que colocar
-
 'MOUSE ESQUERDO' -> +Zoom
 'MOUSE DIREITO' -> -Zoom
-
 */
+
+GLuint carregaTextura(Textura* imagemBMP) {
+	GLuint textureId;
+	glGenTextures(1, &textureId);
+	glBindTexture(GL_TEXTURE_2D, textureId);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imagemBMP->altura, imagemBMP->largura, 0, GL_RGB, GL_UNSIGNED_BYTE, imagemBMP->pixels);
+	return textureId;
+}
+
+GLuint texturaDasEstrelas;
+GLuint texturaDoSol;
+GLuint texturaSuperficieMercurio;
+GLuint texturaSuperficieVenus;
+GLuint texturaSuperficieTerra;
+GLuint texturaAtmosferaTerra;
+GLuint texturaLua;
+GLuint texturaSuperficieMarte;
+GLuint texturaSuperficieJupiter;
+GLuint texturaSuperficieSaturno;
+GLuint texturaSuperficieUrano;
+GLuint texturaSuperficieNetuno;
+
+struct EsferasEspaciais{
+    double raio;
+    double velocidadeDaOrbita; //A velocidade que a esfera "gira" em sua órbita
+    double inclinacaoX;
+    double anguloRotacaoNoProprioEixo;
+    double distanciaAteOSol;
+    double orbita;
+    char *nome;
+    double velocidadeRotacao;
+};
+
+EsferasEspaciais sol;
+EsferasEspaciais mercurio;
+EsferasEspaciais venus;
+EsferasEspaciais terra;
+EsferasEspaciais lua;
+EsferasEspaciais marte;
+EsferasEspaciais phobos;
+EsferasEspaciais jupiter;
+EsferasEspaciais saturno;
+EsferasEspaciais titan;
+EsferasEspaciais uranos;
+EsferasEspaciais netuno;
+
+struct Asteroide{
+    double distancia;
+    double rotacao;
+    double velocidadeRotacao;
+    int tipo; //Se 1 == icosaedro, Se 2 == ..., Se 3 == ...
+};
+
+Asteroide asteroide1;
+Asteroide asteroide2;
+Asteroide asteroide3;
+Asteroide asteroide4;
+Asteroide asteroide5;
+Asteroide asteroide6;
+Asteroide asteroide7;
+Asteroide asteroide8;
+Asteroide asteroide9;
+Asteroide asteroide10;
+Asteroide asteroide11;
+Asteroide asteroide12;
+Asteroide asteroide13;
+Asteroide asteroide14;
+Asteroide asteroide15;
+Asteroide asteroide16;
+Asteroide asteroide17;
+Asteroide asteroide18;
+Asteroide asteroide19;
+Asteroide asteroide20;
 
 GLfloat angle, fAspect;
 
@@ -74,6 +140,10 @@ GLdouble incrementoX = 1;
 GLdouble incrementoY = 1;
 GLdouble incrementoZ = 1;
 
+GLdouble posicaoCameraX_antigo;
+GLdouble posicaoCameraY_antigo;
+GLdouble posicaoCameraZ_antigo;
+
 GLdouble distanciaDoPlaneta = 5;
 
 bool animacaoOn = true;
@@ -83,15 +153,9 @@ bool camera3Ligada = false;
 bool camera4Ligada = true;
 bool precisaRotacionar = false;
 bool estaPausado = false;
-
 bool mostrarNomesPlanetas = false;
 
-GLdouble posicaoCameraX_antigo;
-GLdouble posicaoCameraY_antigo;
-GLdouble posicaoCameraZ_antigo;
-
 ///Visitar os planetas
-
 bool olharMercurio = false;
 bool olharVenus = false;
 bool olharTerra = false;
@@ -104,575 +168,11 @@ bool olharNetuno = false;
 ///
 
 bool verOrbitas = true;
-
 bool comLuzDoSolOn = false;
-
 bool planoOrbitalAtivado = false;
-
 bool iluminacaoEstaLigada = false;
 int tipoIluminacao = 0;
 
-GLuint texturaDoSol;
-GLuint texturaDasEstrelas; //Fundo
-GLuint texturaSuperficieTerra;
-GLuint texturaAtmosferaTerra;
-
-
-
-GLuint carregaTextura(Textura* imagemBMP) {
-	GLuint textureId;
-	glGenTextures(1, &textureId);
-	glBindTexture(GL_TEXTURE_2D, textureId);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imagemBMP->altura, imagemBMP->largura, 0, GL_RGB, GL_UNSIGNED_BYTE, imagemBMP->pixels);
-	return textureId;
-}
-
-void fazerPlano(){ //Tem que arrumar certinho
-    int controleTempo = 0;
-    int controleTempo1 = 0;
-    double Xc = -100;
-    double Zc = -100;
-
-    double Xc_antigo = Xc;
-    double Zc_antigo = Zc;
-
-    double A[] = {Xc, 0, Zc};
-    double B[] = {Xc, 0, Zc + INCREMENTO_PLANO};
-    double C[] = {Xc + INCREMENTO_PLANO, 0, Zc};
-    glColor3f(1, 1, 1);
-
-    ///Horizontal
-    for(int i = 0; i < 500; i++){
-        for(int j = 0; j < 700; j++){
-            glBegin(GL_TRIANGLE_STRIP);
-                if(controleTempo % 2 == 0){
-                    glVertex3f(A[0], A[1], A[2]);
-                    glVertex3f(B[0], B[1], B[2]);
-                    glVertex3f(C[0], C[1], C[2]);
-
-                    A[0] = B[0] + INCREMENTO_PLANO;
-                    A[2] = B[2];
-                }
-                if(controleTempo % 2 != 0){
-                    glVertex3f(A[0], A[1], A[2]);
-                    glVertex3f(B[0], B[1], B[2]);
-                    glVertex3f(C[0], C[1], C[2]);
-
-                    B[0] = A[0];
-                    B[2] = A[2];
-
-                    A[0] = C[0];
-                    A[2] = C[2];
-
-                    C[0] += INCREMENTO_PLANO;
-                }
-            glEnd();
-            controleTempo++;
-        }
-        Zc += INCREMENTO_PLANO * 5;
-        //double A[] = {Xc, 0, Zc};
-        //double B[] = {Xc, 0, Zc + incremento};
-        //double C[] = {Xc + incremento, 0, Zc};
-        A[0] = Xc;
-        A[1] = 0;
-        A[2] = Zc;
-
-        B[0] = Xc;
-        B[1] = 0;
-        B[2] = Zc + INCREMENTO_PLANO;
-
-        C[0] = Xc + INCREMENTO_PLANO;
-        C[1] = 0;
-        C[2] = Zc;
-        controleTempo = 0;
-    }
-
-    ///Vertical
-
-    A[0] = Xc_antigo;
-    A[1] = 0;
-    A[2] = Zc_antigo;
-
-    B[0] = Xc_antigo;
-    B[1] = 0;
-    B[2] = Zc_antigo + INCREMENTO_PLANO;
-
-    C[0] = Xc_antigo + INCREMENTO_PLANO;
-    C[1] = 0;
-    C[2] = Zc_antigo;
-
-    for(int k = 0; k < 500; k++){
-        for(int l = 0; l < 600; l++){
-            glBegin(GL_TRIANGLE_STRIP);
-
-            if(controleTempo1 % 2 == 0){
-                glVertex3f(A[0], A[1], A[2]);
-                glVertex3f(B[0], B[1], B[2]);
-                glVertex3f(C[0], C[1], C[2]);
-
-                A[0] = C[0];
-                C[2] = C[0] + INCREMENTO_PLANO;
-            }
-            if(controleTempo1 % 2 != 0){
-                glVertex3f(A[0], A[1], A[2]);
-                glVertex3f(B[0], B[1], B[2]);
-                glVertex3f(C[0], C[1], C[2]);
-
-                A[0] = B[0];
-                A[2] = B[2];
-
-                B[2] += INCREMENTO_PLANO;
-            }
-            glEnd();
-            controleTempo1++;
-        }
-        Xc_antigo += INCREMENTO_PLANO * 5;
-
-        A[0] = Xc_antigo;
-        A[1] = 0;
-        A[2] = Zc_antigo;
-
-        B[0] = Xc_antigo;
-        B[1] = 0;
-        B[2] = Zc_antigo + INCREMENTO_PLANO;
-
-        C[0] = Xc_antigo + INCREMENTO_PLANO;
-        C[1] = 0;
-        C[2] = Zc_antigo;
-
-        controleTempo1 = 0;
-    }
-
-    //glutSwapBuffers();
-}
-
-void desenharSkyboxes(){
-    if(!planoOrbitalAtivado){
-        ///Plano do lado direito (no início - caso não se desloque) do Sistema Solar
-        glEnable(GL_TEXTURE_2D);
-        glBindTexture(GL_TEXTURE_2D, texturaDasEstrelas);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glBegin(GL_POLYGON);
-        glTexCoord2f(-1.0, 0.0); glVertex3f(-200, -200, -100);
-        glTexCoord2f(2.0, 0.0); glVertex3f(200, -200, -100);
-        glTexCoord2f(2.0, 2.0); glVertex3f(200, 200, -100);
-        glTexCoord2f(-1.0, 2.0); glVertex3f(-200, 200, -100);
-        glEnd();
-
-        ///Plano do lado esquerdo (no início - caso não se desloque) do Sistema Solar
-        glEnable(GL_TEXTURE_2D);
-        glBindTexture(GL_TEXTURE_2D, texturaDasEstrelas);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glBegin(GL_POLYGON);
-        glTexCoord2f(-1.0, 0.0); glVertex3f(-200, -200, 100);
-        glTexCoord2f(2.0, 0.0); glVertex3f(200, -200, 100);
-        glTexCoord2f(2.0, 2.0); glVertex3f(200, 200, 100);
-        glTexCoord2f(-1.0, 2.0); glVertex3f(-200, 200, 100);
-        glEnd();
-
-
-
-        ///Plano da frente (no início - caso não se desloque) do Sistema Solar
-        glEnable(GL_TEXTURE_2D);
-        glBindTexture(GL_TEXTURE_2D, texturaDasEstrelas);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glBegin(GL_POLYGON);
-        glTexCoord2f(0.0, 0.0); glVertex3f(-100, -90, -900);
-        glTexCoord2f(8.0, 0.0); glVertex3f(-100, -90, 900);
-        glTexCoord2f(8.0, 8.0); glVertex3f(-100, 90, -900);
-        glTexCoord2f(0.0, 8.0); glVertex3f(-100, 90, 900);
-        glEnd();
-
-        ///Plano abaixo (no início - caso não se desloque) do Sistema Solar
-        glBindTexture(GL_TEXTURE_2D, texturaDasEstrelas);
-        glBegin(GL_POLYGON);
-        glTexCoord2f(0.0, 0.0); glVertex3f(-100, -90, 200);
-        glTexCoord2f(8.0, 0.0); glVertex3f(100, -90, 200);
-        glTexCoord2f(8.0, 8.0); glVertex3f(100, -90, -200);
-        glTexCoord2f(0.0, 8.0); glVertex3f(-100, -90, -200);
-        glEnd();
-        glDisable(GL_TEXTURE_2D);
-    }
-
-    ///Plano atrás do Sistema Solar
-    //Não estou conseguindo arrumar (aperta seta para esquerda e tem buracos. Caso não veja, aperta 'a')
-        glEnable(GL_TEXTURE_2D);
-        glBindTexture(GL_TEXTURE_2D, texturaDasEstrelas);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glBegin(GL_POLYGON);
-            glTexCoord2f(-1.0, 0.0); glVertex3f(90, -90, -200);
-            glTexCoord2f(2.0, 2.0); glVertex3f(90, -90, 200);
-            glTexCoord2f(2.0, 0.0); glVertex3f(90, 120, -200);
-            glTexCoord2f(-1.0, 2.0); glVertex3f(90, 120, 200);
-        glEnd();
-        glDisable(GL_TEXTURE_2D);
-
-
-}
-
-struct EsferasEspaciais{
-    double raio;
-    double velocidadeDaOrbita; //A velocidade que a esfera "gira" em sua órbita
-    double inclinacaoX;
-    double anguloRotacaoNoProprioEixo;
-    double distanciaAteOSol;
-    double orbita;
-    char *nome;
-    double velocidadeRotacao;
-};
-
-EsferasEspaciais sol;
-EsferasEspaciais mercurio;
-EsferasEspaciais venus;
-EsferasEspaciais terra;
-EsferasEspaciais marte;
-EsferasEspaciais jupiter;
-EsferasEspaciais saturno;
-EsferasEspaciais uranos;
-EsferasEspaciais netuno;
-EsferasEspaciais lua;
-EsferasEspaciais phobos; //Lua marte
-
-struct Asteroide{
-    double distancia;
-    double rotacao;
-    double velocidadeRotacao;
-    int tipo; //Se 1 == icosaedro, Se 2 == ..., Se 3 == ...
-};
-
-Asteroide asteroide1;
-Asteroide asteroide2;
-Asteroide asteroide3;
-Asteroide asteroide4;
-Asteroide asteroide5;
-Asteroide asteroide6;
-Asteroide asteroide7;
-Asteroide asteroide8;
-Asteroide asteroide9;
-Asteroide asteroide10;
-Asteroide asteroide11;
-Asteroide asteroide12;
-Asteroide asteroide13;
-Asteroide asteroide14;
-Asteroide asteroide15;
-Asteroide asteroide16;
-Asteroide asteroide17;
-Asteroide asteroide18;
-Asteroide asteroide19;
-Asteroide asteroide20;
-
-
-//Não sei se está orbitando certinho
-void desenharSatelitesNaturais(double raio, double distancia, double inclinacaoX, double anguloRotacaoNoProprioEixo, double orbita, char *nome, EsferasEspaciais planetaMae){
-    glPushMatrix(); //Sistema padrão de coordenadas
-    glColor3f(1, 1, 1);
-    glRotatef(orbita, 0, 1, 0);
-    glTranslatef(planetaMae.distanciaAteOSol, 0, 0);
-
-    glRotatef(planetaMae.anguloRotacaoNoProprioEixo, 0, 1, 0);  //Temos que ver qual é melhor
-    //glRotatef(orbita, 0, 1, 0);                               //o segundo Rotacionar deve ser o angulo do planetaMae primeiro ou a orbita
-
-    glTranslatef(distancia - planetaMae.distanciaAteOSol, 0, 0);
-
-    glRotatef(orbita, 0, 1, 0);
-    //glRotatef(planetaMae.anguloRotacaoNoProprioEixo, 0, 1, 0);
-
-    glPushMatrix();
-
-
-    glutSolidSphere(raio, 180, 180);
-
-    glPopMatrix();
-
-    glColor3f(0, 1, 1);
-    if(mostrarNomesPlanetas){
-        glRasterPos3f(0, raio + 2, 0);
-        for(int i = 0; i < strlen(nome); i++){
-            glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, nome[i]);
-        }
-    }
-
-    glPopMatrix();
-}
-
-void desenharAsteroides(double distancia, double rotacao, int tipo){
-    glPushMatrix();
-    glColor3f(0.5, 0.5, 0.5);
-    glRotatef(rotacao, 0, 1, 0);
-    glTranslatef(distancia, 0, 0);
-    glScalef(0.3, 0.3, 0.3);
-
-    if(tipo == 1){
-        glutSolidIcosahedron();
-    }
-    else if(tipo == 2){
-        glutSolidDodecahedron();
-    }
-    else if(tipo == 3){
-        glutSolidOctahedron();
-    }
-    glPopMatrix();
-}
-
-void desenharEsfera(double raio, double distancia, double inclinacaoX, double anguloRotacaoNoProprioEixo, double orbita, char *nome, bool verEsfera){
-    //g//lMatrixMode(GL_TEXTURE);
-    //glLoadIdentity();
-    //glMatrixMode(GL_MODELVIEW);
-    //glLoadIdentity();
-    //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glPushMatrix(); //Sistema padrão de coordenadas
-    glColor3f(0, 1, 0);
-    glRotatef(orbita, 0, 1, 0);
-    glTranslatef(distancia , 0, 0);//angulo, x, y, z
-
-    //Colocar if's para ver qual esfera é para carregar as texturas e cores certas
-
-    glPushMatrix();
-
-    //glColor3f(0, 1, 0);
-    glRotatef(inclinacaoX, 1, 0, 0); //angulo, x, y, z
-    glRotatef(anguloRotacaoNoProprioEixo, 0, 1, 0);
-    glRotatef(90, 1, 0, 0);
-
-    glPushMatrix();
-
-    if(verEsfera){
-        //glPushMatrix();
-        //double z = -sin(orbita * 180 * 3.1415) + distancia;
-        double z = distancia * sin(((orbita) * 3.141592) / 180);
-        //double x = -sin(orbita * 180 * 3.1415) + distancia;
-        double x = distancia * cos(((orbita) * 3.141592) / 180);
-        double y = -sin(orbita * 180 * 3.1415);
-        //posicaoCameraX = raio + distanciaDoPlaneta;
-        posicaoCameraX = 1.4 * x;
-        posicaoCameraY = 0;
-        posicaoCameraZ = z * 1.4;
-        posicaoOlharZ = 0;
-        posicaoOlharY = 0;
-        posicaoOlharX = 0;
-        //posicaoOlharX = distancia - raio;
-        //posicaoCameraY = 0;
-        //posicaoCameraZ = 0;
-        //posicaoOlharZ = 0;
-        //posicaoOlharY = 0;
-        //posicaoOlharX = 0;
-    }
-
-
-     //Colocamos textura
-
-    if(strcmp(nome, "Sol") == 0){
-        GLUquadric *quadric = gluNewQuadric();
-        glEnable(GL_TEXTURE_2D);
-        glColor3f(1.0, 1.0, 1.0);
-        //glEnable(GL_TEXTURE_2D);
-        glBindTexture(GL_TEXTURE_2D, texturaDoSol);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        gluQuadricTexture(quadric, 1);
-        gluSphere(quadric, raio, 20, 20);
-        glDisable(GL_TEXTURE_2D);
-
-        glEnable(GL_BLEND);
-
-        glColor4f(1, 0, 0, 0.1475);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        gluSphere(quadric, raio * 1.075, 20, 20);
-
-
-        //glDisable(GL_BLEND);
-        //glDisable(GL_TEXTURE_2D);
-
-        glEnable(GL_BLEND);
-
-        glColor4f(1, 1, 0, 0.15);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        gluSphere(quadric, raio * 1.025, 20, 20);
-
-
-        glDisable(GL_BLEND);
-        glDisable(GL_TEXTURE_2D);
-    }
-    else if(strcmp(nome, "Terra") == 0){
-        GLUquadric *quadric = gluNewQuadric();
-        glEnable(GL_TEXTURE_2D);
-        glColor3f(1.0, 1.0, 1.0);
-        //glEnable(GL_TEXTURE_2D);
-        glBindTexture(GL_TEXTURE_2D, texturaSuperficieTerra);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        gluQuadricTexture(quadric, 1);
-        gluSphere(quadric, raio, 20, 20);
-        //glDisable(GL_TEXTURE_2D);
-
-
-        //glDisable(GL_BLEND);
-        //glDisable(GL_TEXTURE_2D);
-
-        glEnable(GL_BLEND);
-        //texturaAtmosferaTerra
-        glColor4f(1, 1, 0, 0.20);
-        glBindTexture(GL_TEXTURE_2D, texturaAtmosferaTerra);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        gluQuadricTexture(quadric, 1);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        gluSphere(quadric, raio * 1.12, 20, 20);
-
-
-        glDisable(GL_BLEND);
-        glDisable(GL_TEXTURE_2D);
-    }
-    else{
-        glutSolidSphere(raio, 180, 180);
-    }
-
-    ///Desenhando os anéis dos planetas
-
-    if(strcmp(nome, "Saturno") == 0){
-        glColor3f(0.5, 0.35, 0.15);
-        //glRotatef(90, 1, 0, 0);
-        glutWireTorus(0.235, raio + 0.8, 100, 100);
-    }
-
-    if(strcmp(nome, "Netuno") == 0){
-        glColor3f(0, 0.85, 1);
-        glutWireTorus(0.08, raio + 0.43, 100, 100);
-    }
-
-    if(strcmp(nome, "Jupiter") == 0){
-        glColor3f(1.0, 0.5, 0);
-        glutWireTorus(0.11, raio + 0.4, 100, 100);
-    }
-
-    if(strcmp(nome, "Urano") == 0){
-        glColor3f(0, 0, 1);
-        //glRotatef(90, 1, 0, 0);
-        glutWireTorus(0.07, raio + 0.38, 100, 100);
-    }
-
-
-    //glColor3f(1.0, 1.0, 1.0);
-
-    //glutSolidSphere(raio, 180, 180);
-
-    glPopMatrix();
-    glPopMatrix();
-
-
-
-    glColor3f(0, 1, 1);
-    if(mostrarNomesPlanetas){
-        glRasterPos3f(0, raio + 2, 0);
-        for(int i = 0; i < strlen(nome); i++){
-            glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, nome[i]);
-        }
-    }
-
-    glPopMatrix();
-}
-
-///Escrever alguma coisa na tela, slá
-// Tá piscando, queria escrever slá: "Passaram-se 3 dias e 2 horas" ou se está pausado, com iluminação on ou off
-void escreverNaTela(){
-    glMatrixMode(GL_PROJECTION);
-    glPushMatrix();
-    glLoadIdentity();
-
-    gluOrtho2D(0, ALTURA, 0, LARGURA);
-    glMatrixMode(GL_MODELVIEW);
-    glPushMatrix();
-    glLoadIdentity();
-    glColor3f(1.0, 1.0, 1.0);
-    glRasterPos2f(200, 200);
-    char texte[] = "Eita"; //Testando
-    for(int i = 0; i < strlen(texte); i++){
-        glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, texte[i]);
-    }
-
-    //glMatrixMode(GL_MODELVIEW);
-    glPopMatrix();
-    glMatrixMode(GL_MODELVIEW);
-    glPopMatrix();
-}
-
-void desenharOrbitas(){
-    glPushMatrix();
-    glColor3f(1, 1, 1);
-    glRotatef(90, 1, 0, 0);
-    //glPushMatrix();
-        //glRotatef(90, 1, 0, 0);
-    glutWireTorus(0.005, mercurio.distanciaAteOSol, 100, 100);
-    glutWireTorus(.005, venus.distanciaAteOSol, 100, 100);
-    glutWireTorus(.005, terra.distanciaAteOSol, 100, 100);
-    glutWireTorus(.005, marte.distanciaAteOSol, 100, 100);
-    glutWireTorus(.005, jupiter.distanciaAteOSol, 100, 100);
-    glutWireTorus(.005, saturno.distanciaAteOSol, 100, 100);
-    glutWireTorus(.005, uranos.distanciaAteOSol, 100, 100);
-    glutWireTorus(.005, netuno.distanciaAteOSol, 100, 100);
-    glPopMatrix();
-}
-
-// Função callback chamada para fazer o desenho
-void Desenha(void)
-{
-
-    //glLoadIdentity();
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //Limpar a tela para que não tenha as antigas esferas que antes foram desenhadas
-	//glColor3f(0.0f, 0.0f, 1.0f);
-
-	desenharSkyboxes();
-	if(planoOrbitalAtivado){
-        fazerPlano();
-	}
-    if(verOrbitas){
-        desenharOrbitas();
-    }
-
-
-	desenharEsfera(mercurio.raio, mercurio.distanciaAteOSol, mercurio.inclinacaoX, mercurio.anguloRotacaoNoProprioEixo, mercurio.orbita, mercurio.nome, olharMercurio);
-	desenharEsfera(venus.raio, venus.distanciaAteOSol, venus.inclinacaoX, venus.anguloRotacaoNoProprioEixo, venus.orbita, venus.nome, olharVenus);
-	desenharEsfera(terra.raio, terra.distanciaAteOSol, terra.inclinacaoX, terra.anguloRotacaoNoProprioEixo, terra.orbita, terra.nome, olharTerra);
-	desenharSatelitesNaturais(lua.raio, lua.distanciaAteOSol, lua.inclinacaoX, lua.anguloRotacaoNoProprioEixo, lua.orbita, lua.nome, terra);
-	desenharEsfera(marte.raio, marte.distanciaAteOSol, marte.inclinacaoX, marte.anguloRotacaoNoProprioEixo, marte.orbita, marte.nome, olharMarte);
-	desenharSatelitesNaturais(phobos.raio, phobos.distanciaAteOSol, phobos.inclinacaoX, phobos.anguloRotacaoNoProprioEixo, phobos.orbita, phobos.nome, marte);
-	desenharEsfera(jupiter.raio, jupiter.distanciaAteOSol, jupiter.inclinacaoX, jupiter.anguloRotacaoNoProprioEixo, jupiter.orbita, jupiter.nome, olharJupiter);
-	desenharEsfera(saturno.raio, saturno.distanciaAteOSol, saturno.inclinacaoX, saturno.anguloRotacaoNoProprioEixo, saturno.orbita, saturno.nome, olharSaturno);
-	desenharEsfera(uranos.raio, uranos.distanciaAteOSol, uranos.inclinacaoX, uranos.anguloRotacaoNoProprioEixo, uranos.orbita, uranos.nome, olharUranos);
-	desenharEsfera(netuno.raio, netuno.distanciaAteOSol, netuno.inclinacaoX, netuno.anguloRotacaoNoProprioEixo, netuno.orbita, netuno.nome, olharNetuno);
-	desenharEsfera(sol.raio, sol.distanciaAteOSol, sol.inclinacaoX, sol.anguloRotacaoNoProprioEixo, sol.orbita, sol.nome, false);
-
-	desenharAsteroides(asteroide1.distancia, asteroide1.rotacao, asteroide1.tipo);
-	desenharAsteroides(asteroide2.distancia, asteroide2.rotacao, asteroide2.tipo);
-	desenharAsteroides(asteroide3.distancia, asteroide3.rotacao, asteroide3.tipo);
-	desenharAsteroides(asteroide4.distancia, asteroide4.rotacao, asteroide4.tipo);
-	desenharAsteroides(asteroide5.distancia, asteroide5.rotacao, asteroide5.tipo);
-	desenharAsteroides(asteroide6.distancia, asteroide6.rotacao, asteroide6.tipo);
-	desenharAsteroides(asteroide7.distancia, asteroide7.rotacao, asteroide6.tipo);
-	desenharAsteroides(asteroide8.distancia, asteroide8.rotacao, asteroide8.tipo);
-	desenharAsteroides(asteroide9.distancia, asteroide9.rotacao, asteroide9.tipo);
-	desenharAsteroides(asteroide10.distancia, asteroide10.rotacao, asteroide10.tipo);
-	desenharAsteroides(asteroide11.distancia, asteroide11.rotacao, asteroide11.tipo);
-	desenharAsteroides(asteroide12.distancia, asteroide12.rotacao, asteroide12.tipo);
-	desenharAsteroides(asteroide13.distancia, asteroide13.rotacao, asteroide13.tipo);
-	desenharAsteroides(asteroide14.distancia, asteroide14.rotacao, asteroide14.tipo);
-	desenharAsteroides(asteroide15.distancia, asteroide15.rotacao, asteroide15.tipo);
-	desenharAsteroides(asteroide16.distancia, asteroide16.rotacao, asteroide16.tipo);
-	desenharAsteroides(asteroide17.distancia, asteroide17.rotacao, asteroide17.tipo);
-	desenharAsteroides(asteroide18.distancia, asteroide18.rotacao, asteroide18.tipo);
-	desenharAsteroides(asteroide19.distancia, asteroide19.rotacao, asteroide19.tipo);
-	desenharAsteroides(asteroide20.distancia, asteroide20.rotacao, asteroide20.tipo);
-
-    //escreverNaTela();
-	// Executa os comandos OpenGL
-	glutSwapBuffers();
- }
-
-// Inicializa parâmetros de rendering
 void Inicializa (void){
 
     glEnable(GL_DEPTH_TEST);
@@ -680,23 +180,53 @@ void Inicializa (void){
     glEnable(GL_NORMALIZE);
 	glEnable(GL_COLOR_MATERIAL);
 
-	Textura* solTextura = carregarImagemBMP("Sol.bmp");
-	texturaDoSol = carregaTextura(solTextura);
-	delete solTextura;
-
 	Textura* estrelaTextura = carregarImagemBMP("Estrelas_SkyBoxes.bmp");
 	texturaDasEstrelas = carregaTextura(estrelaTextura);
 	delete estrelaTextura;
 
-	//texturaMarteAtmosfera
+	Textura* solTextura = carregarImagemBMP("Sol.bmp");
+	texturaDoSol = carregaTextura(solTextura);
+	delete solTextura;
+
+	Textura* superficieMercurioTextura = carregarImagemBMP("Mercurio.bmp");
+    texturaSuperficieMercurio = carregaTextura(superficieMercurioTextura);
+    delete superficieMercurioTextura;
+
+    Textura* superficieVenusTextura = carregarImagemBMP("Venus.bmp");
+    texturaSuperficieVenus = carregaTextura(superficieVenusTextura);
+    delete superficieVenusTextura;
 
     Textura* superficieTerraTextura = carregarImagemBMP("Terra.bmp");
     texturaSuperficieTerra = carregaTextura(superficieTerraTextura);
     delete superficieTerraTextura;
 
+    Textura* superficieLuatextura = carregarImagemBMP("Lua.bmp");
+    texturaLua = carregaTextura(superficieLuatextura);
+    delete superficieLuatextura;
+
     Textura* atmosferaTerraTextura = carregarImagemBMP("Atmosfera.bmp");
     texturaAtmosferaTerra = carregaTextura(atmosferaTerraTextura);
     delete atmosferaTerraTextura;
+
+    Textura* superficieMarteTextura = carregarImagemBMP("Marte.bmp");
+    texturaSuperficieMarte = carregaTextura(superficieMarteTextura);
+    delete superficieMarteTextura;
+
+    Textura* superficieJupiterTextura = carregarImagemBMP("Jupiter.bmp");
+    texturaSuperficieJupiter = carregaTextura(superficieJupiterTextura);
+    delete superficieJupiterTextura;
+
+    Textura* superficieSaturnoTextura = carregarImagemBMP("Saturno.bmp");
+    texturaSuperficieSaturno = carregaTextura(superficieSaturnoTextura);
+    delete superficieSaturnoTextura;
+
+    Textura* superficieUranoTextura = carregarImagemBMP("Urano.bmp");
+    texturaSuperficieUrano = carregaTextura(superficieUranoTextura);
+    delete superficieUranoTextura;
+
+    Textura* superficieNetunoTextura = carregarImagemBMP("Netuno.bmp");
+    texturaSuperficieNetuno = carregaTextura(superficieNetunoTextura);
+    delete superficieNetunoTextura;
 
     sol.distanciaAteOSol = 0;
     sol.inclinacaoX = 0;
@@ -716,6 +246,7 @@ void Inicializa (void){
     mercurio.nome = "Mercurio";
     mercurio.velocidadeRotacao = 0.41;
 
+
     venus.distanciaAteOSol = 11;
     venus.inclinacaoX = 177;
     venus.raio = 1.5;
@@ -733,7 +264,6 @@ void Inicializa (void){
     terra.orbita = 0;
     terra.nome = "Terra";
     terra.velocidadeRotacao = 8.743;
-    //terra.velocidadeRotacao = 24.3;
 
     lua.distanciaAteOSol = terra.distanciaAteOSol + terra.raio + 2;
     lua.inclinacaoX = 0;
@@ -751,8 +281,8 @@ void Inicializa (void){
     marte.anguloRotacaoNoProprioEixo = 0;
     marte.orbita = 0;
     marte.nome = "Marte";
-    marte.velocidadeRotacao = 9.1;
     //marte.velocidadeRotacao = 23.328;
+    marte.velocidadeRotacao = 8.2;
 
     phobos.distanciaAteOSol = marte.distanciaAteOSol + marte.raio + 0.875;
     phobos.inclinacaoX = 0;
@@ -779,7 +309,18 @@ void Inicializa (void){
     saturno.anguloRotacaoNoProprioEixo = 0;
     saturno.orbita = 0;
     saturno.nome = "Saturno";
-    saturno.velocidadeRotacao = 53.01;
+    saturno.velocidadeRotacao = 5;
+    //saturno.velocidadeRotacao = 53.01;
+
+    titan.distanciaAteOSol = saturno.distanciaAteOSol + saturno.raio + 2.050515;
+    titan.inclinacaoX = 0;
+    titan.raio = saturno.raio * 0.08;
+    titan.velocidadeDaOrbita = saturno.velocidadeDaOrbita;
+    titan.anguloRotacaoNoProprioEixo = 0;
+    titan.orbita = 0;
+    titan.nome = "Tita";
+    titan.velocidadeRotacao = saturno.velocidadeRotacao;
+
 
     uranos.distanciaAteOSol = 45.5;
     uranos.inclinacaoX = 47;
@@ -798,6 +339,7 @@ void Inicializa (void){
     netuno.orbita = 0;
     netuno.nome = "Netuno";
     netuno.velocidadeRotacao = 36.45;
+
 
     /// Asteroides
 
@@ -907,10 +449,538 @@ void Inicializa (void){
     asteroide20.velocidadeRotacao = 0.875;
     asteroide20.tipo = 1;
 
+
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
     angle = 80;
 }
+
+void desenharSkyboxes(){
+    if(!planoOrbitalAtivado){
+        ///Plano do lado direito (no início - caso não se desloque) do Sistema Solar
+        glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, texturaDasEstrelas);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glBegin(GL_POLYGON);
+        glTexCoord2f(-1.0, 0.0); glVertex3f(-200, -200, -100);
+        glTexCoord2f(2.0, 0.0); glVertex3f(200, -200, -100);
+        glTexCoord2f(2.0, 2.0); glVertex3f(200, 200, -100);
+        glTexCoord2f(-1.0, 2.0); glVertex3f(-200, 200, -100);
+        glEnd();
+
+        ///Plano do lado esquerdo (no início - caso não se desloque) do Sistema Solar
+        glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, texturaDasEstrelas);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glBegin(GL_POLYGON);
+        glTexCoord2f(-1.0, 0.0); glVertex3f(-200, -200, 100);
+        glTexCoord2f(2.0, 0.0); glVertex3f(200, -200, 100);
+        glTexCoord2f(2.0, 2.0); glVertex3f(200, 200, 100);
+        glTexCoord2f(-1.0, 2.0); glVertex3f(-200, 200, 100);
+        glEnd();
+
+
+
+        ///Plano da frente (no início - caso não se desloque) do Sistema Solar
+        glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, texturaDasEstrelas);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glBegin(GL_POLYGON);
+        glTexCoord2f(0.0, 0.0); glVertex3f(-100, -90, -900);
+        glTexCoord2f(8.0, 0.0); glVertex3f(-100, -90, 900);
+        glTexCoord2f(8.0, 8.0); glVertex3f(-100, 90, -900);
+        glTexCoord2f(0.0, 8.0); glVertex3f(-100, 90, 900);
+        glEnd();
+
+        ///Plano abaixo (no início - caso não se desloque) do Sistema Solar
+        glBindTexture(GL_TEXTURE_2D, texturaDasEstrelas);
+        glBegin(GL_POLYGON);
+        glTexCoord2f(0.0, 0.0); glVertex3f(-100, -90, 200);
+        glTexCoord2f(8.0, 0.0); glVertex3f(100, -90, 200);
+        glTexCoord2f(8.0, 8.0); glVertex3f(100, -90, -200);
+        glTexCoord2f(0.0, 8.0); glVertex3f(-100, -90, -200);
+        glEnd();
+        glDisable(GL_TEXTURE_2D);
+        ///Plano atrás do Sistema Solar
+        glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, texturaDasEstrelas);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glBegin(GL_POLYGON);
+            glTexCoord2f(-1.0, 0.0); glVertex3f(90, -90, -200);
+            glTexCoord2f(2.0, 2.0); glVertex3f(90, -90, 200);
+            glTexCoord2f(2.0, 0.0); glVertex3f(90, 120, -200);
+            glTexCoord2f(-1.0, 2.0); glVertex3f(90, 120, 200);
+        glEnd();
+        glDisable(GL_TEXTURE_2D);
+
+    }
+}
+
+void desenharEsfera(double raio, double distancia, double inclinacaoX, double anguloRotacaoNoProprioEixo, double orbita, char *nome, bool verEsfera){
+
+    glPushMatrix(); //Sistema padrão de coordenadas
+    glColor3f(0, 1, 0);
+    glRotatef(orbita, 0, 1, 0);
+    glTranslatef(distancia , 0, 0);//angulo, x, y, z
+    glPushMatrix();
+    glRotatef(inclinacaoX, 1, 0, 0); //angulo, x, y, z
+    glRotatef(anguloRotacaoNoProprioEixo, 0, 1, 0);
+    glRotatef(90, 1, 0, 0);
+    glPushMatrix();
+
+    if(verEsfera){
+        //glPushMatrix();
+        //double z = -sin(orbita * 180 * 3.1415) + distancia;
+        double z = distancia * sin(((orbita) * 3.141592) / 180);
+        //double x = -sin(orbita * 180 * 3.1415) + distancia;
+        double x = distancia * cos(((orbita) * 3.141592) / 180);
+        double y = -sin(orbita * 180 * 3.1415);
+        //posicaoCameraX = raio + distanciaDoPlaneta;
+        posicaoCameraX = 1.4 * x;
+        posicaoCameraY = 0;
+        posicaoCameraZ = z * 1.4;
+        posicaoOlharZ = 0;
+        posicaoOlharY = 0;
+        posicaoOlharX = 0;
+        //posicaoOlharX = distancia - raio;
+        //posicaoCameraY = 0;
+        //posicaoCameraZ = 0;
+        //posicaoOlharZ = 0;
+        //posicaoOlharY = 0;
+        //posicaoOlharX = 0;
+    }
+     //Colocamos textura
+
+    if(strcmp(nome, "Sol") == 0){
+        GLUquadric *quadric = gluNewQuadric();
+        glEnable(GL_TEXTURE_2D);
+
+        glColor3f(1.0, 1.0, 1.0);
+        //glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, texturaDoSol);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        gluQuadricTexture(quadric, 1);
+        gluSphere(quadric, raio, 20, 20);
+
+        glDisable(GL_TEXTURE_2D);
+
+        glEnable(GL_BLEND);
+
+        glColor4f(1, 0, 0, 0.1475);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        gluSphere(quadric, raio * 1.075, 20, 20);
+
+        glEnable(GL_BLEND);
+
+        glColor4f(1, 1, 0, 0.15);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        gluSphere(quadric, raio * 1.025, 20, 20);
+
+        glDisable(GL_BLEND);
+        glDisable(GL_TEXTURE_2D);
+    }
+    else if(strcmp(nome, "Mercurio") == 0){
+        GLUquadric *quadric = gluNewQuadric();
+        glEnable(GL_TEXTURE_2D);
+        glColor3f(1.0, 1.0, 1.0);
+        glBindTexture(GL_TEXTURE_2D, texturaSuperficieMercurio);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        gluQuadricTexture(quadric, 1);
+        gluSphere(quadric, raio, 20, 20);
+        glDisable(GL_TEXTURE_2D);
+        }
+
+    else if(strcmp(nome, "Venus") == 0){
+        GLUquadric *quadric = gluNewQuadric();
+        glEnable(GL_TEXTURE_2D);
+        glColor3f(1.0, 1.0, 1.0);
+        glBindTexture(GL_TEXTURE_2D, texturaSuperficieVenus);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        gluQuadricTexture(quadric, 1);
+        gluSphere(quadric, raio, 20, 20);
+        glDisable(GL_TEXTURE_2D);
+        }
+
+    else if(strcmp(nome, "Terra") == 0){
+        GLUquadric *quadric = gluNewQuadric();
+        glEnable(GL_TEXTURE_2D);
+        glColor3f(1.0, 1.0, 1.0);
+        //glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, texturaSuperficieTerra);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        gluQuadricTexture(quadric, 1);
+        gluSphere(quadric, raio, 20, 20);
+
+        glEnable(GL_BLEND);
+        //texturaAtmosferaTerra
+        glColor4f(1, 1, 0, 0.20);
+        glBindTexture(GL_TEXTURE_2D, texturaAtmosferaTerra);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        gluQuadricTexture(quadric, 1);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        gluSphere(quadric, raio * 1.12, 20, 20);
+
+        glDisable(GL_BLEND);
+        glDisable(GL_TEXTURE_2D);
+    }
+    else if(strcmp(nome, "Marte") == 0){
+        GLUquadric *quadric = gluNewQuadric();
+        glEnable(GL_TEXTURE_2D);
+        glColor3f(1.0, 1.0, 1.0);
+        //glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, texturaSuperficieMarte);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        gluQuadricTexture(quadric, 1);
+        gluSphere(quadric, raio, 20, 20);
+        glDisable(GL_TEXTURE_2D);
+        }
+
+    else if(strcmp(nome, "Jupiter") == 0){
+        GLUquadric *quadric = gluNewQuadric();
+        glEnable(GL_TEXTURE_2D);
+        glColor3f(1.0, 1.0, 1.0);
+        //glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, texturaSuperficieJupiter);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        gluQuadricTexture(quadric, 1);
+        gluSphere(quadric, raio, 20, 20);
+        glDisable(GL_TEXTURE_2D);
+        }
+
+    else if(strcmp(nome, "Saturno") == 0){
+        GLUquadric *quadric = gluNewQuadric();
+        glEnable(GL_TEXTURE_2D);
+        glColor3f(1.0, 1.0, 1.0);
+        //glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, texturaSuperficieSaturno);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        gluQuadricTexture(quadric, 1);
+        gluSphere(quadric, raio, 20, 20);
+        glDisable(GL_TEXTURE_2D);
+        }
+
+    else if(strcmp(nome, "Urano") == 0){
+        GLUquadric *quadric = gluNewQuadric();
+        glEnable(GL_TEXTURE_2D);
+        glColor3f(1.0, 1.0, 1.0);
+        //glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, texturaSuperficieUrano);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        gluQuadricTexture(quadric, 1);
+        gluSphere(quadric, raio, 20, 20);
+        glDisable(GL_TEXTURE_2D);
+        }
+
+    else if(strcmp(nome, "Netuno") == 0){
+        GLUquadric *quadric = gluNewQuadric();
+        glEnable(GL_TEXTURE_2D);
+        glColor3f(1.0, 1.0, 1.0);
+        //glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, texturaSuperficieNetuno);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        gluQuadricTexture(quadric, 1);
+        gluSphere(quadric, raio, 20, 20);
+        glDisable(GL_TEXTURE_2D);
+        }
+
+    else{
+        glutSolidSphere(raio, 180, 180);
+    }
+
+    ///Desenhando os anéis dos planetas
+
+    if(strcmp(nome, "Saturno") == 0){
+        glColor3f(0.5, 0.35, 0.15);
+        //glRotatef(90, 1, 0, 0);
+        glutWireTorus(0.235, raio + 0.8, 100, 100);
+    }
+
+    if(strcmp(nome, "Netuno") == 0){
+        glColor3f(0, 0.85, 1);
+        glutWireTorus(0.08, raio + 0.43, 100, 100);
+    }
+
+    if(strcmp(nome, "Jupiter") == 0){
+        glColor3f(1.0, 0.5, 0);
+        glutWireTorus(0.11, raio + 0.4, 100, 100);
+    }
+
+    if(strcmp(nome, "Urano") == 0){
+        glColor3f(0, 0, 1);
+        //glRotatef(90, 1, 0, 0);
+        glutWireTorus(0.07, raio + 0.38, 100, 100);
+    }
+
+    glPopMatrix();
+    glPopMatrix();
+
+    glColor3f(0, 1, 1);
+    if(mostrarNomesPlanetas){
+        glRasterPos3f(0, raio + 2, 0);
+        for(int i = 0; i < strlen(nome); i++){
+            glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, nome[i]);
+        }
+    }
+
+    glPopMatrix();
+}
+
+void desenharSatelitesNaturais(double raio, double distancia, double inclinacaoX, double anguloRotacaoNoProprioEixo, double orbita, char *nome, EsferasEspaciais planetaMae){
+    glPushMatrix(); //Sistema padrão de coordenadas
+    glColor3f(1, 1, 1);
+    glRotatef(orbita, 0, 1, 0);
+    glTranslatef(planetaMae.distanciaAteOSol, 0, 0);
+
+    glRotatef(planetaMae.anguloRotacaoNoProprioEixo, 0, 1, 0);  //Temos que ver qual é melhor
+    //glRotatef(orbita, 0, 1, 0);                               //o segundo Rotacionar deve ser o angulo do planetaMae primeiro ou a orbita
+
+    glTranslatef(distancia - planetaMae.distanciaAteOSol, 0, 0);
+
+    glRotatef(orbita, 0, 1, 0);
+    //glRotatef(planetaMae.anguloRotacaoNoProprioEixo, 0, 1, 0);
+
+    glPushMatrix();
+
+    if(strcmp(nome, "Lua") == 0){
+        GLUquadric *quadric = gluNewQuadric();
+        glEnable(GL_TEXTURE_2D);
+        glColor3f(1.0, 1.0, 1.0);
+        //glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, texturaLua);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        gluQuadricTexture(quadric, 1);
+        gluSphere(quadric, raio, 20, 20);
+        glDisable(GL_TEXTURE_2D);}
+
+    glutSolidSphere(raio, 180, 180);
+
+    glPopMatrix();
+
+    glColor3f(0, 1, 1);
+    if(mostrarNomesPlanetas){
+        glRasterPos3f(0, raio + 2, 0);
+        for(int i = 0; i < strlen(nome); i++){
+            glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, nome[i]);
+        }
+    }
+
+    glPopMatrix();
+}
+
+void desenharAsteroides(double distancia, double rotacao, int tipo){
+    glPushMatrix();
+    glColor3f(0.5, 0.5, 0.5);
+    glRotatef(rotacao, 0, 1, 0);
+    glTranslatef(distancia, 0, 0);
+    glScalef(0.3, 0.3, 0.3);
+
+    if(tipo == 1){
+        glutSolidIcosahedron();
+    }
+    else if(tipo == 2){
+        glutSolidDodecahedron();
+    }
+    else if(tipo == 3){
+        glutSolidOctahedron();
+    }
+    glPopMatrix();
+}
+
+void desenharOrbitas(){
+    glPushMatrix();
+    glColor3f(1, 1, 1);
+    glRotatef(90, 1, 0, 0);
+    glutWireTorus(0.005, mercurio.distanciaAteOSol, 100, 100);
+    glutWireTorus(.005, venus.distanciaAteOSol, 100, 100);
+    glutWireTorus(.005, terra.distanciaAteOSol, 100, 100);
+    glutWireTorus(.005, marte.distanciaAteOSol, 100, 100);
+    glutWireTorus(.005, jupiter.distanciaAteOSol, 100, 100);
+    glutWireTorus(.005, saturno.distanciaAteOSol, 100, 100);
+    glutWireTorus(.005, uranos.distanciaAteOSol, 100, 100);
+    glutWireTorus(.005, netuno.distanciaAteOSol, 100, 100);
+    glPopMatrix();
+}
+
+void desenharPlanoOrbital(){
+    int controleTempo = 0;
+    int controleTempo1 = 0;
+    double Xc = -100;
+    double Zc = -190;
+
+    double Xc_antigo = Xc;
+    double Zc_antigo = Zc;
+
+    double A[] = {Xc, 0, Zc};
+    double B[] = {Xc, 0, Zc + INCREMENTO_PLANO};
+    double C[] = {Xc + INCREMENTO_PLANO, 0, Zc};
+    glColor3f(1, 1, 1);
+
+    //Vertical
+    for(int i = 0; i < 120; i++){
+        for(int j = 0; j < 600; j++){
+            glBegin(GL_TRIANGLE_STRIP);
+                if(controleTempo % 2 == 0){
+                    glVertex3f(A[0], A[1], A[2]);
+                    glVertex3f(B[0], B[1], B[2]);
+                    glVertex3f(C[0], C[1], C[2]);
+
+                    A[0] = B[0] + INCREMENTO_PLANO;
+                    A[2] = B[2];
+                }
+                if(controleTempo % 2 != 0){
+                    glVertex3f(A[0], A[1], A[2]);
+                    glVertex3f(B[0], B[1], B[2]);
+                    glVertex3f(C[0], C[1], C[2]);
+
+                    B[0] = A[0];
+                    B[2] = A[2];
+
+                    A[0] = C[0];
+                    A[2] = C[2];
+
+                    C[0] += INCREMENTO_PLANO;
+                }
+            glEnd();
+            controleTempo++;
+        }
+        Zc += INCREMENTO_PLANO * 5;
+
+        A[0] = Xc;
+        A[1] = 0;
+        A[2] = Zc;
+
+        B[0] = Xc;
+        B[1] = 0;
+        B[2] = Zc + INCREMENTO_PLANO;
+
+        C[0] = Xc + INCREMENTO_PLANO;
+        C[1] = 0;
+        C[2] = Zc;
+        controleTempo = 0;
+    }
+
+    //Horizontal
+
+    A[0] = Xc_antigo;
+    A[1] = 0;
+    A[2] = Zc_antigo;
+
+    B[0] = Xc_antigo;
+    B[1] = 0;
+    B[2] = Zc_antigo + INCREMENTO_PLANO;
+
+    C[0] = Xc_antigo + INCREMENTO_PLANO;
+    C[1] = 0;
+    C[2] = Zc_antigo;
+
+    for(int k = 0; k < 55; k++){
+        for(int l = 0; l < 1200; l++){
+            glBegin(GL_TRIANGLE_STRIP);
+
+            if(controleTempo1 % 2 == 0){
+                glVertex3f(A[0], A[1], A[2]);
+                glVertex3f(B[0], B[1], B[2]);
+                glVertex3f(C[0], C[1], C[2]);
+
+                A[0] = C[0];
+                C[2] = C[0] + INCREMENTO_PLANO;
+            }
+            if(controleTempo1 % 2 != 0){
+                glVertex3f(A[0], A[1], A[2]);
+                glVertex3f(B[0], B[1], B[2]);
+                glVertex3f(C[0], C[1], C[2]);
+
+                A[0] = B[0];
+                A[2] = B[2];
+
+                B[2] += INCREMENTO_PLANO;
+            }
+            glEnd();
+            controleTempo1++;
+        }
+        Xc_antigo += INCREMENTO_PLANO * 5;
+
+        A[0] = Xc_antigo;
+        A[1] = 0;
+        A[2] = Zc_antigo;
+
+        B[0] = Xc_antigo;
+        B[1] = 0;
+        B[2] = Zc_antigo + INCREMENTO_PLANO;
+
+        C[0] = Xc_antigo + INCREMENTO_PLANO;
+        C[1] = 0;
+        C[2] = Zc_antigo;
+
+        controleTempo1 = 0;
+    }
+}
+
+// Função callback chamada para fazer o desenho
+void Desenha(void)
+{
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //Limpar a tela para que não tenha as antigas esferas que antes foram desenhadas
+
+	desenharSkyboxes();
+
+	if(planoOrbitalAtivado){
+        desenharPlanoOrbital();
+	}
+
+    if(verOrbitas){
+        desenharOrbitas();
+    }
+
+	desenharEsfera(mercurio.raio, mercurio.distanciaAteOSol, mercurio.inclinacaoX, mercurio.anguloRotacaoNoProprioEixo, mercurio.orbita, mercurio.nome, olharMercurio);
+	desenharEsfera(venus.raio, venus.distanciaAteOSol, venus.inclinacaoX, venus.anguloRotacaoNoProprioEixo, venus.orbita, venus.nome, olharVenus);
+	desenharEsfera(terra.raio, terra.distanciaAteOSol, terra.inclinacaoX, terra.anguloRotacaoNoProprioEixo, terra.orbita, terra.nome, olharTerra);
+	desenharSatelitesNaturais(lua.raio, lua.distanciaAteOSol, lua.inclinacaoX, lua.anguloRotacaoNoProprioEixo, lua.orbita, lua.nome, terra);
+	desenharEsfera(marte.raio, marte.distanciaAteOSol, marte.inclinacaoX, marte.anguloRotacaoNoProprioEixo, marte.orbita, marte.nome, olharMarte);
+	desenharSatelitesNaturais(phobos.raio, phobos.distanciaAteOSol, phobos.inclinacaoX, phobos.anguloRotacaoNoProprioEixo, phobos.orbita, phobos.nome, marte);
+	desenharEsfera(jupiter.raio, jupiter.distanciaAteOSol, jupiter.inclinacaoX, jupiter.anguloRotacaoNoProprioEixo, jupiter.orbita, jupiter.nome, olharJupiter);
+	desenharEsfera(saturno.raio, saturno.distanciaAteOSol, saturno.inclinacaoX, saturno.anguloRotacaoNoProprioEixo, saturno.orbita, saturno.nome, olharSaturno);
+	desenharSatelitesNaturais(titan.raio, titan.distanciaAteOSol, titan.inclinacaoX, titan.anguloRotacaoNoProprioEixo, titan.orbita, titan.nome, saturno);
+	desenharEsfera(uranos.raio, uranos.distanciaAteOSol, uranos.inclinacaoX, uranos.anguloRotacaoNoProprioEixo, uranos.orbita, uranos.nome, olharUranos);
+	desenharEsfera(netuno.raio, netuno.distanciaAteOSol, netuno.inclinacaoX, netuno.anguloRotacaoNoProprioEixo, netuno.orbita, netuno.nome, olharNetuno);
+	desenharEsfera(sol.raio, sol.distanciaAteOSol, sol.inclinacaoX, sol.anguloRotacaoNoProprioEixo, sol.orbita, sol.nome, false);
+	desenharAsteroides(asteroide1.distancia, asteroide1.rotacao, asteroide1.tipo);
+	desenharAsteroides(asteroide2.distancia, asteroide2.rotacao, asteroide2.tipo);
+	desenharAsteroides(asteroide3.distancia, asteroide3.rotacao, asteroide3.tipo);
+	desenharAsteroides(asteroide4.distancia, asteroide4.rotacao, asteroide4.tipo);
+	desenharAsteroides(asteroide5.distancia, asteroide5.rotacao, asteroide5.tipo);
+	desenharAsteroides(asteroide6.distancia, asteroide6.rotacao, asteroide6.tipo);
+	desenharAsteroides(asteroide7.distancia, asteroide7.rotacao, asteroide6.tipo);
+	desenharAsteroides(asteroide8.distancia, asteroide8.rotacao, asteroide8.tipo);
+	desenharAsteroides(asteroide9.distancia, asteroide9.rotacao, asteroide9.tipo);
+	desenharAsteroides(asteroide10.distancia, asteroide10.rotacao, asteroide10.tipo);
+	desenharAsteroides(asteroide11.distancia, asteroide11.rotacao, asteroide11.tipo);
+	desenharAsteroides(asteroide12.distancia, asteroide12.rotacao, asteroide12.tipo);
+	desenharAsteroides(asteroide13.distancia, asteroide13.rotacao, asteroide13.tipo);
+	desenharAsteroides(asteroide14.distancia, asteroide14.rotacao, asteroide14.tipo);
+	desenharAsteroides(asteroide15.distancia, asteroide15.rotacao, asteroide15.tipo);
+	desenharAsteroides(asteroide16.distancia, asteroide16.rotacao, asteroide16.tipo);
+	desenharAsteroides(asteroide17.distancia, asteroide17.rotacao, asteroide17.tipo);
+	desenharAsteroides(asteroide18.distancia, asteroide18.rotacao, asteroide18.tipo);
+	desenharAsteroides(asteroide19.distancia, asteroide19.rotacao, asteroide19.tipo);
+	desenharAsteroides(asteroide20.distancia, asteroide20.rotacao, asteroide20.tipo);
+	glutSwapBuffers();
+ }
+
 
 void Redimensiona(int w, int h){
 	glViewport(0, 0, w, h);
@@ -922,8 +992,10 @@ void Redimensiona(int w, int h){
 
 // Função usada para especificar o volume de visualização
 void EspecificaParametrosVisualizacao(void){
+
 	// Especifica sistema de coordenadas de projeção
 	glMatrixMode(GL_PROJECTION);
+
 	// Inicializa sistema de coordenadas de projeção
 	glLoadIdentity();
 
@@ -939,8 +1011,6 @@ void EspecificaParametrosVisualizacao(void){
 	//gluLookAt(obsX, obsY, obsZ, 0, 0, 0, 0, 1, 0);
 	gluLookAt(posicaoCameraX, posicaoCameraY, posicaoCameraZ, posicaoOlharX, posicaoOlharY, posicaoOlharZ, 0, 1, 0);
 }
-
-
 
 // Função callback chamada quando o tamanho da janela é alterado
 void AlteraTamanhoJanela(GLsizei w, GLsizei h)
@@ -958,15 +1028,6 @@ void AlteraTamanhoJanela(GLsizei w, GLsizei h)
 }
 
 void ligaDesligaMudaIluminacao(){
-    /*if(iluminacaoEstaLigada){
-        glEnable(GL_LIGHTING);
-        glEnable(GL_LIGHT0);
-    }
-    else{
-        glDisable(GL_LIGHTING);
-        glDisable(GL_LIGHT0);
-        }*/
-
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
 
@@ -980,6 +1041,7 @@ void ligaDesligaMudaIluminacao(){
 
     if(iluminacaoEstaLigada){
         if(tipoIluminacao == 0){
+            printf("Chegou iluminacao 0");
             iluminacaoDifusaEEspecular[0] = 1;
             iluminacaoDifusaEEspecular[1] = 1;
             iluminacaoDifusaEEspecular[2] = 1;
@@ -1004,12 +1066,6 @@ void ligaDesligaMudaIluminacao(){
             direcaoDaLuzNaIluminacao[1] = 0;
             direcaoDaLuzNaIluminacao[2] = 0;
 
-            //iluminacaoDifusaEEspecular = {1, 1, 1, 1};
-            //iluminacaoAmbiente = {0, 0, 0, 1};
-            //iluminacaoEmissiva = {0.5, 0.5, 0.5, 1};
-            //posicaoDaIluminacao = {0, 85, 12, 0};
-            //direcaoDaLuzNaIluminacao = {1, 0, 0};
-
             anguloFonteDeLuz = 120;
             atenuacaoDaIluminacao = 0.75;
 
@@ -1027,6 +1083,7 @@ void ligaDesligaMudaIluminacao(){
             glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, atenuacaoDaIluminacao);
         }
         else if(tipoIluminacao == 1){
+            printf("Chegou iluminacao 1");
             iluminacaoDifusaEEspecular[0] = 1;
             iluminacaoDifusaEEspecular[1] = 1;
             iluminacaoDifusaEEspecular[2] = 1;
@@ -1068,6 +1125,7 @@ void ligaDesligaMudaIluminacao(){
             glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, atenuacaoDaIluminacao);
         }
         else if(tipoIluminacao == 2){
+            printf("Chegou iluminacao 2");
             iluminacaoDifusaEEspecular[0] = 1;
             iluminacaoDifusaEEspecular[1] = 1;
             iluminacaoDifusaEEspecular[2] = 1;
@@ -1164,7 +1222,6 @@ void ligaDesligaMudaIluminacao(){
 }
 
 void Animacao(int periodo){
-    //glMatrixMode(GL_PROJECTION);
 
     ligaDesligaMudaIluminacao();
 
@@ -1192,6 +1249,9 @@ void Animacao(int periodo){
 
         saturno.orbita += saturno.velocidadeDaOrbita;
         saturno.anguloRotacaoNoProprioEixo += saturno.velocidadeRotacao;
+
+        titan.orbita += titan.velocidadeDaOrbita;
+        titan.anguloRotacaoNoProprioEixo += titan.velocidadeRotacao;
 
         uranos.orbita += uranos.velocidadeDaOrbita;
         uranos.anguloRotacaoNoProprioEixo += uranos.velocidadeRotacao;
@@ -1221,13 +1281,9 @@ void Animacao(int periodo){
         asteroide20.rotacao += asteroide20.velocidadeRotacao;
 
         Desenha();
-
-
-        //EspecificaParametrosVisualizacao();
-        //glutPostRedisplay();
     }
-    desenharOrbitas();
 
+    desenharOrbitas();
 
     //Deslocamento para camera 4
     if(camera4Ligada == true && (posicaoCameraX != posicaoCamera4X || posicaoCameraY != posicaoCamera4Y || posicaoCameraZ != posicaoCamera4Z)){
@@ -1301,112 +1357,6 @@ void Animacao(int periodo){
 
 
     glutTimerFunc(periodo, Animacao, periodo);
-}
-
-// Função callback chamada para gerenciar eventos do mouse
-void GerenciaMouse(int button, int state, int x, int y){
-	if (button == GLUT_LEFT_BUTTON)
-		if (state == GLUT_DOWN) {  // Zoom-in
-			if (angle >= 20) angle -= 5;
-		}
-	if (button == GLUT_RIGHT_BUTTON)
-		if (state == GLUT_DOWN) {  // Zoom-out
-			if (angle <= 100) angle += 5;
-		}
-	EspecificaParametrosVisualizacao();
-	glutPostRedisplay();
-}
-
-void teclasEspeciais(int key, int x, int y){ //Função que nos permite usar teclas especiais, como, neste caso, as setas
-    if(key == GLUT_KEY_UP){
-        camera1Ligada = true;
-        camera4Ligada = false;
-        camera3Ligada = false;
-        camera2Ligada = false;
-        posicaoOlharX = 0;
-        posicaoOlharY = 0;
-        posicaoOlharZ = 0;
-    }
-    if(key == GLUT_KEY_DOWN){
-        camera4Ligada = true;
-        camera3Ligada = false;
-        camera2Ligada = false;
-        camera1Ligada = false;
-        posicaoOlharX = 0;
-        posicaoOlharY = 0;
-        posicaoOlharZ = 0;
-    }
-    if(key == GLUT_KEY_LEFT){
-        camera4Ligada = false;
-        camera3Ligada = false;
-        camera2Ligada = true;
-        camera1Ligada = false;
-        posicaoOlharX = 0;
-        posicaoOlharY = 0;
-        posicaoOlharZ = 0;
-    }
-    if(key == GLUT_KEY_HOME){
-        if(posicaoOlharZ < 100){
-            posicaoOlharZ += 5;
-            camera1Ligada = false;
-            camera2Ligada = false;
-            camera3Ligada = false;
-            camera4Ligada = false;
-        }
-    }
-
-    if(key == GLUT_KEY_END){
-        if(posicaoOlharZ > -50){
-            posicaoOlharZ -= 5;
-            camera1Ligada = false;
-            camera2Ligada = false;
-            camera3Ligada = false;
-            camera4Ligada = false;
-        }
-    }
-
-    if(key == GLUT_KEY_PAGE_DOWN){
-        if(posicaoOlharX > -20){
-            posicaoOlharX -= 5;
-            camera1Ligada = false;
-            camera2Ligada = false;
-            camera3Ligada = false;
-            camera4Ligada = false;
-        }
-    }
-
-    if(key == GLUT_KEY_PAGE_UP){
-        if(posicaoOlharX < 100){
-            posicaoOlharX += 5;
-            camera1Ligada = false;
-            camera2Ligada = false;
-            camera3Ligada = false;
-            camera4Ligada = false;
-        }
-    }
-
-    if(key == GLUT_KEY_F2){
-        if(posicaoOlharY > -20){
-            posicaoOlharY -= 5;
-            camera1Ligada = false;
-            camera2Ligada = false;
-            camera3Ligada = false;
-            camera4Ligada = false;
-        }
-    }
-
-    if(key == GLUT_KEY_F1){
-        if(posicaoOlharY < 100){
-            posicaoOlharY += 5;
-            camera1Ligada = false;
-            camera2Ligada = false;
-            camera3Ligada = false;
-            camera4Ligada = false;
-        }
-    }
-
-
-    glutPostRedisplay();
 }
 
 void teclado(unsigned char key, int x, int y) {
@@ -1514,6 +1464,112 @@ void teclado(unsigned char key, int x, int y) {
    glutPostRedisplay();
 }
 
+void teclasEspeciais(int key, int x, int y){ //Função que nos permite usar teclas especiais, como, neste caso, as setas
+    if(key == GLUT_KEY_UP){
+        camera1Ligada = true;
+        camera4Ligada = false;
+        camera3Ligada = false;
+        camera2Ligada = false;
+        posicaoOlharX = 0;
+        posicaoOlharY = 0;
+        posicaoOlharZ = 0;
+    }
+    if(key == GLUT_KEY_DOWN){
+        camera4Ligada = true;
+        camera3Ligada = false;
+        camera2Ligada = false;
+        camera1Ligada = false;
+        posicaoOlharX = 0;
+        posicaoOlharY = 0;
+        posicaoOlharZ = 0;
+    }
+    if(key == GLUT_KEY_LEFT){
+        camera4Ligada = false;
+        camera3Ligada = false;
+        camera2Ligada = true;
+        camera1Ligada = false;
+        posicaoOlharX = 0;
+        posicaoOlharY = 0;
+        posicaoOlharZ = 0;
+    }
+    if(key == GLUT_KEY_HOME){
+        if(posicaoOlharZ < 100){
+            posicaoOlharZ += 5;
+            camera1Ligada = false;
+            camera2Ligada = false;
+            camera3Ligada = false;
+            camera4Ligada = false;
+        }
+    }
+
+    if(key == GLUT_KEY_END){
+        if(posicaoOlharZ > -50){
+            posicaoOlharZ -= 5;
+            camera1Ligada = false;
+            camera2Ligada = false;
+            camera3Ligada = false;
+            camera4Ligada = false;
+        }
+    }
+
+    if(key == GLUT_KEY_PAGE_DOWN){
+        if(posicaoOlharX > -20){
+            posicaoOlharX -= 5;
+            camera1Ligada = false;
+            camera2Ligada = false;
+            camera3Ligada = false;
+            camera4Ligada = false;
+        }
+    }
+
+    if(key == GLUT_KEY_PAGE_UP){
+        if(posicaoOlharX < 100){
+            posicaoOlharX += 5;
+            camera1Ligada = false;
+            camera2Ligada = false;
+            camera3Ligada = false;
+            camera4Ligada = false;
+        }
+    }
+
+    if(key == GLUT_KEY_F2){
+        if(posicaoOlharY > -20){
+            posicaoOlharY -= 5;
+            camera1Ligada = false;
+            camera2Ligada = false;
+            camera3Ligada = false;
+            camera4Ligada = false;
+        }
+    }
+
+    if(key == GLUT_KEY_F1){
+        if(posicaoOlharY < 100){
+            posicaoOlharY += 5;
+            camera1Ligada = false;
+            camera2Ligada = false;
+            camera3Ligada = false;
+            camera4Ligada = false;
+        }
+    }
+
+
+    glutPostRedisplay();
+}
+
+// Função callback chamada para gerenciar eventos do mouse
+void GerenciaMouse(int button, int state, int x, int y){
+	if (button == GLUT_LEFT_BUTTON)
+		if (state == GLUT_DOWN) {  // Zoom-in
+			if (angle >= 20) angle -= 5;
+		}
+	if (button == GLUT_RIGHT_BUTTON)
+		if (state == GLUT_DOWN) {  // Zoom-out
+			if (angle <= 100) angle += 5;
+		}
+	EspecificaParametrosVisualizacao();
+	glutPostRedisplay();
+}
+
 // Programa Principal
 int main(int argc, char** argv)
 {
@@ -1521,7 +1577,7 @@ int main(int argc, char** argv)
     glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA |GLUT_DEPTH);
 	glutInitWindowSize(750, 500);
-	glutCreateWindow("Visualizacao 3D");
+	glutCreateWindow("Sistema Solar");
 	glShadeModel(GL_SMOOTH);
 	Inicializa();
 	glutDisplayFunc(Desenha);
