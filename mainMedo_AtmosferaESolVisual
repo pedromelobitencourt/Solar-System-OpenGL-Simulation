@@ -64,7 +64,7 @@ GLdouble posicaoCamera3X = 75;
 
 GLdouble posicaoCamera4Z = 0;
 GLdouble posicaoCamera4Y = 80;
-GLdouble posicaoCamera4X = 75;//75
+GLdouble posicaoCamera4X = 75;//
 
 GLdouble posicaoCameraZ = posicaoCamera4Z;
 GLdouble posicaoCameraY = posicaoCamera4Y;
@@ -114,8 +114,8 @@ int tipoIluminacao = 0;
 
 GLuint texturaDoSol;
 GLuint texturaDasEstrelas; //Fundo
-//GLuint texturaMarteSuperficie;
-//GLuint texturaMarteAtmosfera;
+GLuint texturaSuperficieTerra;
+GLuint texturaAtmosferaTerra;
 
 
 
@@ -459,19 +459,19 @@ void desenharEsfera(double raio, double distancia, double inclinacaoX, double an
         GLUquadric *quadric = gluNewQuadric();
         glEnable(GL_TEXTURE_2D);
         glColor3f(1.0, 1.0, 1.0);
-        glEnable(GL_TEXTURE_2D);
+        //glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, texturaDoSol);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         gluQuadricTexture(quadric, 1);
         gluSphere(quadric, raio, 20, 20);
-        //glDisable(GL_TEXTURE_2D);
+        glDisable(GL_TEXTURE_2D);
 
         glEnable(GL_BLEND);
 
         glColor4f(1, 0, 0, 0.1475);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        gluSphere(quadric, raio * 1.045, 20, 20);
+        gluSphere(quadric, raio * 1.075, 20, 20);
 
 
         //glDisable(GL_BLEND);
@@ -481,43 +481,42 @@ void desenharEsfera(double raio, double distancia, double inclinacaoX, double an
 
         glColor4f(1, 1, 0, 0.15);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        gluSphere(quadric, raio * 1, 20, 20);
+        gluSphere(quadric, raio * 1.025, 20, 20);
 
 
         glDisable(GL_BLEND);
         glDisable(GL_TEXTURE_2D);
     }
-    /*else if(strcmp(nome, "Marte") == 0){ //Tentei fazer marte ter uma atmosfera, mas a imagem da atmosfera que achei não tinha intensidade de 24 bits
+    else if(strcmp(nome, "Terra") == 0){
         GLUquadric *quadric = gluNewQuadric();
         glEnable(GL_TEXTURE_2D);
         glColor3f(1.0, 1.0, 1.0);
-        glEnable(GL_TEXTURE_2D);
-        glBindTexture(GL_TEXTURE_2D, texturaMarteSuperficie);
+        //glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, texturaSuperficieTerra);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         gluQuadricTexture(quadric, 1);
         gluSphere(quadric, raio, 20, 20);
-        glDisable(GL_TEXTURE_2D);
+        //glDisable(GL_TEXTURE_2D);
 
-        quadric = gluNewQuadric();
-        glEnable(GL_TEXTURE_2D);
+
+        //glDisable(GL_BLEND);
+        //glDisable(GL_TEXTURE_2D);
+
         glEnable(GL_BLEND);
-        glDepthMask(GL_FALSE);
-
-        glColor3f(1.0, 1.0, 1.0);
-        glEnable(GL_TEXTURE_2D);
-        glBlendFunc(GL_SRC_COLOR, GL_ONE_MINUS_SRC_COLOR);
-
-        glBindTexture(GL_TEXTURE_2D, texturaMarteAtmosfera);
+        //texturaAtmosferaTerra
+        glColor4f(1, 1, 0, 0.20);
+        glBindTexture(GL_TEXTURE_2D, texturaAtmosferaTerra);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         gluQuadricTexture(quadric, 1);
-        gluSphere(quadric, raio * 1.2, 20, 20);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        gluSphere(quadric, raio * 1.12, 20, 20);
 
-        glDepthMask(GL_TRUE);
+
         glDisable(GL_BLEND);
         glDisable(GL_TEXTURE_2D);
-    }*/
+    }
     else{
         glutSolidSphere(raio, 180, 180);
     }
@@ -666,13 +665,13 @@ void Inicializa (void){
 
 	//texturaMarteAtmosfera
 
-    //Textura* superficieMarteTextura = carregarImagemBMP("Marte.bmp");
-    //texturaMarteSuperficie = carregaTextura(superficieMarteTextura);
-    //delete superficieMarteTextura;
+    Textura* superficieTerraTextura = carregarImagemBMP("Terra.bmp");
+    texturaSuperficieTerra = carregaTextura(superficieTerraTextura);
+    delete superficieTerraTextura;
 
-    //Textura* atmosferaMarteTextura = carregarImagemBMP("Atmosfera.bmp");
-    //texturaMarteAtmosfera = carregaTextura(atmosferaMarteTextura);
-    //delete atmosferaMarteTextura;
+    Textura* atmosferaTerraTextura = carregarImagemBMP("Atmosfera.bmp");
+    texturaAtmosferaTerra = carregaTextura(atmosferaTerraTextura);
+    delete atmosferaTerraTextura;
 
     sol.distanciaAteOSol = 0;
     sol.inclinacaoX = 0;
