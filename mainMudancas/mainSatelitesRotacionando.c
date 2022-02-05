@@ -335,6 +335,7 @@ EsferasEspaciais saturno;
 EsferasEspaciais uranos;
 EsferasEspaciais netuno;
 EsferasEspaciais lua;
+EsferasEspaciais phobos; //Lua marte
 
 struct Asteroide{
     double distancia;
@@ -638,6 +639,7 @@ void Desenha(void)
 	desenharEsfera(terra.raio, terra.distanciaAteOSol, terra.inclinacaoX, terra.anguloRotacaoNoProprioEixo, terra.orbita, terra.nome, olharTerra);
 	desenharSatelitesNaturais(lua.raio, lua.distanciaAteOSol, lua.inclinacaoX, lua.anguloRotacaoNoProprioEixo, lua.orbita, lua.nome, terra);
 	desenharEsfera(marte.raio, marte.distanciaAteOSol, marte.inclinacaoX, marte.anguloRotacaoNoProprioEixo, marte.orbita, marte.nome, olharMarte);
+	desenharSatelitesNaturais(phobos.raio, phobos.distanciaAteOSol, phobos.inclinacaoX, phobos.anguloRotacaoNoProprioEixo, phobos.orbita, phobos.nome, marte);
 	desenharEsfera(jupiter.raio, jupiter.distanciaAteOSol, jupiter.inclinacaoX, jupiter.anguloRotacaoNoProprioEixo, jupiter.orbita, jupiter.nome, olharJupiter);
 	desenharEsfera(saturno.raio, saturno.distanciaAteOSol, saturno.inclinacaoX, saturno.anguloRotacaoNoProprioEixo, saturno.orbita, saturno.nome, olharSaturno);
 	desenharEsfera(uranos.raio, uranos.distanciaAteOSol, uranos.inclinacaoX, uranos.anguloRotacaoNoProprioEixo, uranos.orbita, uranos.nome, olharUranos);
@@ -749,7 +751,17 @@ void Inicializa (void){
     marte.anguloRotacaoNoProprioEixo = 0;
     marte.orbita = 0;
     marte.nome = "Marte";
-    marte.velocidadeRotacao = 23.328;
+    marte.velocidadeRotacao = 9.1;
+    //marte.velocidadeRotacao = 23.328;
+
+    phobos.distanciaAteOSol = marte.distanciaAteOSol + marte.raio + 0.875;
+    phobos.inclinacaoX = 0;
+    phobos.raio = marte.raio * 0.157;
+    phobos.velocidadeDaOrbita = marte.velocidadeDaOrbita;
+    phobos.anguloRotacaoNoProprioEixo = 0;
+    phobos.orbita = 0;
+    phobos.nome = "Phobos";
+    phobos.velocidadeRotacao = marte.velocidadeRotacao;
 
     jupiter.distanciaAteOSol = 28;
     jupiter.inclinacaoX = 3.13;
@@ -1171,6 +1183,9 @@ void Animacao(int periodo){
 
         marte.orbita += marte.velocidadeDaOrbita;
         marte.anguloRotacaoNoProprioEixo += marte.velocidadeRotacao;
+
+        phobos.orbita += phobos.velocidadeDaOrbita;
+        phobos.anguloRotacaoNoProprioEixo += phobos.velocidadeRotacao;
 
         jupiter.orbita += jupiter.velocidadeDaOrbita;
         jupiter.anguloRotacaoNoProprioEixo += jupiter.velocidadeRotacao;
