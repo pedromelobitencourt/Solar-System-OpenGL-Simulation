@@ -1577,7 +1577,7 @@ int main(int argc, char** argv)
     glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA |GLUT_DEPTH);
 	glutInitWindowSize(750, 500);
-	glutCreateWindow("Sistema Solar");
+	glutCreateWindow("TP2 - Sistema Solar");
 	glShadeModel(GL_SMOOTH);
 	Inicializa();
 	glutDisplayFunc(Desenha);
