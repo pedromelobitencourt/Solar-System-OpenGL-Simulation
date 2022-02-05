@@ -10,7 +10,6 @@
 #define ALTURA 500
 #define INCREMENTO_PLANO 0.7
 
-
 //Rafael Pereira Duarte
 //Site texturas: https://www.solarsystemscope.com/textures/
 
