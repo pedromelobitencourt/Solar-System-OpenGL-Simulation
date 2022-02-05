@@ -3,7 +3,7 @@
 #include <gl/glut.h>
 #include <stdio.h>
 #include <string.h>
-#include <math.h> //Tava tentando usar para camera mover junto com o planeta escolhido
+#include <math.h>
 #include "carregartextura.h"
 
 #define LARGURA 750
