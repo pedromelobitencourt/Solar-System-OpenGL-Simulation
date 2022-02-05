@@ -349,6 +349,20 @@ Asteroide asteroide3;
 Asteroide asteroide4;
 Asteroide asteroide5;
 Asteroide asteroide6;
+Asteroide asteroide7;
+Asteroide asteroide8;
+Asteroide asteroide9;
+Asteroide asteroide10;
+Asteroide asteroide11;
+Asteroide asteroide12;
+Asteroide asteroide13;
+Asteroide asteroide14;
+Asteroide asteroide15;
+Asteroide asteroide16;
+Asteroide asteroide17;
+Asteroide asteroide18;
+Asteroide asteroide19;
+Asteroide asteroide20;
 
 
 //Não sei se está orbitando certinho
@@ -636,6 +650,15 @@ void Desenha(void)
 	desenharAsteroides(asteroide4.distancia, asteroide4.rotacao, asteroide4.tipo);
 	desenharAsteroides(asteroide5.distancia, asteroide5.rotacao, asteroide5.tipo);
 	desenharAsteroides(asteroide6.distancia, asteroide6.rotacao, asteroide6.tipo);
+	desenharAsteroides(asteroide7.distancia, asteroide7.rotacao, asteroide6.tipo);
+	desenharAsteroides(asteroide8.distancia, asteroide8.rotacao, asteroide8.tipo);
+	desenharAsteroides(asteroide9.distancia, asteroide9.rotacao, asteroide9.tipo);
+	desenharAsteroides(asteroide10.distancia, asteroide10.rotacao, asteroide10.tipo);
+	desenharAsteroides(asteroide11.distancia, asteroide11.rotacao, asteroide11.tipo);
+	desenharAsteroides(asteroide12.distancia, asteroide12.rotacao, asteroide12.tipo);
+	desenharAsteroides(asteroide13.distancia, asteroide13.rotacao, asteroide13.tipo);
+	desenharAsteroides(asteroide14.distancia, asteroide14.rotacao, asteroide14.tipo);
+	desenharAsteroides(asteroide15.distancia, asteroide15.rotacao, asteroide15.tipo);
 
     //escreverNaTela();
 	// Executa os comandos OpenGL
@@ -788,7 +811,7 @@ void Inicializa (void){
     asteroide4.tipo = 2;
 
     asteroide5.distancia = (saturno.distanciaAteOSol + uranos.distanciaAteOSol)/2;
-    asteroide5.rotacao = 23;
+    asteroide5.rotacao = 80;
     asteroide5.velocidadeRotacao = 0.875;
     asteroide5.tipo = 3;
 
@@ -796,6 +819,51 @@ void Inicializa (void){
     asteroide6.rotacao = 70;
     asteroide6.velocidadeRotacao = 0.875;
     asteroide6.tipo = 1;
+
+    asteroide7.distancia = (netuno.distanciaAteOSol + uranos.distanciaAteOSol)/2;
+    asteroide7.rotacao = 234;
+    asteroide7.velocidadeRotacao = 0.875;
+    asteroide7.tipo = 3;
+
+    asteroide8.distancia = (netuno.distanciaAteOSol + uranos.distanciaAteOSol)/2;
+    asteroide8.rotacao = 98.653;
+    asteroide8.velocidadeRotacao = 0.875;
+    asteroide8.tipo = 1;
+
+    asteroide9.distancia = (netuno.distanciaAteOSol + uranos.distanciaAteOSol)/2;
+    asteroide9.rotacao = 49.876;
+    asteroide9.velocidadeRotacao = 0.875;
+    asteroide9.tipo = 2;
+
+    asteroide10.distancia = (saturno.distanciaAteOSol + jupiter.distanciaAteOSol)/2;
+    asteroide10.rotacao = 1.54;
+    asteroide10.velocidadeRotacao = 0.875;
+    asteroide10.tipo = 2;
+
+    asteroide11.distancia = (saturno.distanciaAteOSol + jupiter.distanciaAteOSol)/2;
+    asteroide11.rotacao = 125.982;
+    asteroide11.velocidadeRotacao = 0.875;
+    asteroide11.tipo = 3;
+
+    asteroide12.distancia = (saturno.distanciaAteOSol + jupiter.distanciaAteOSol)/2;
+    asteroide12.rotacao = 76.275;
+    asteroide12.velocidadeRotacao = 0.875;
+    asteroide12.tipo = 1;
+
+    asteroide15.distancia = (terra.distanciaAteOSol + marte.distanciaAteOSol)/2;
+    asteroide15.rotacao = 7.98;
+    asteroide15.velocidadeRotacao = 0.875;
+    asteroide15.tipo = 2;
+
+    asteroide13.distancia = (terra.distanciaAteOSol + marte.distanciaAteOSol)/2;
+    asteroide13.rotacao = 231.76;
+    asteroide13.velocidadeRotacao = 0.875;
+    asteroide13.tipo = 3;
+
+    asteroide14.distancia = (terra.distanciaAteOSol + marte.distanciaAteOSol)/2;
+    asteroide14.rotacao = 310.25;
+    asteroide14.velocidadeRotacao = 0.875;
+    asteroide14.tipo = 3;
 
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
@@ -901,7 +969,6 @@ void ligaDesligaMudaIluminacao(){
 
     if(iluminacaoEstaLigada){
         if(tipoIluminacao == 0){
-            printf("Chegou iluminacao 0");
             iluminacaoDifusaEEspecular[0] = 1;
             iluminacaoDifusaEEspecular[1] = 1;
             iluminacaoDifusaEEspecular[2] = 1;
@@ -949,7 +1016,6 @@ void ligaDesligaMudaIluminacao(){
             glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, atenuacaoDaIluminacao);
         }
         else if(tipoIluminacao == 1){
-            printf("Chegou iluminacao 1");
             iluminacaoDifusaEEspecular[0] = 1;
             iluminacaoDifusaEEspecular[1] = 1;
             iluminacaoDifusaEEspecular[2] = 1;
@@ -991,7 +1057,6 @@ void ligaDesligaMudaIluminacao(){
             glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, atenuacaoDaIluminacao);
         }
         else if(tipoIluminacao == 2){
-            printf("Chegou iluminacao 2");
             iluminacaoDifusaEEspecular[0] = 1;
             iluminacaoDifusaEEspecular[1] = 1;
             iluminacaoDifusaEEspecular[2] = 1;
@@ -1122,10 +1187,19 @@ void Animacao(int periodo){
 
         asteroide1.rotacao += asteroide1.velocidadeRotacao;
         asteroide2.rotacao += asteroide2.velocidadeRotacao;
-        asteroide3.rotacao += asteroide2.velocidadeRotacao;
-        asteroide4.rotacao += asteroide2.velocidadeRotacao;
-        asteroide5.rotacao += asteroide2.velocidadeRotacao;
-        asteroide6.rotacao += asteroide2.velocidadeRotacao;
+        asteroide3.rotacao += asteroide3.velocidadeRotacao;
+        asteroide4.rotacao += asteroide4.velocidadeRotacao;
+        asteroide5.rotacao += asteroide5.velocidadeRotacao;
+        asteroide6.rotacao += asteroide6.velocidadeRotacao;
+        asteroide7.rotacao += asteroide7.velocidadeRotacao;
+        asteroide8.rotacao += asteroide8.velocidadeRotacao;
+        asteroide9.rotacao += asteroide9.velocidadeRotacao;
+        asteroide10.rotacao += asteroide10.velocidadeRotacao;
+        asteroide11.rotacao += asteroide11.velocidadeRotacao;
+        asteroide12.rotacao += asteroide12.velocidadeRotacao;
+        asteroide13.rotacao += asteroide13.velocidadeRotacao;
+        asteroide14.rotacao += asteroide14.velocidadeRotacao;
+        asteroide15.rotacao += asteroide15.velocidadeRotacao;
 
         Desenha();
 
