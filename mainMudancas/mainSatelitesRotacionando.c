@@ -8,7 +8,7 @@
 
 #define LARGURA 750 //Ver se está usando
 #define ALTURA 500 //Ver se está usando
-#define INCREMENTO_PLANO 0.7 //Ver se está usando
+#define INCREMENTO_PLANO 0.7 
 
 //Pedro Vitor Melo Bitencourt
 //Site texturas: https://www.solarsystemscope.com/textures/
