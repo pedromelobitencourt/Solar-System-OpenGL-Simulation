@@ -49,7 +49,9 @@ GLuint carregaTextura(Textura* imagemBMP) {
 GLuint texturaDasEstrelas;
 GLuint texturaDoSol;
 GLuint texturaSuperficieMercurio;
+GLuint texturaPhobos;
 GLuint texturaSuperficieVenus;
+GLuint texturaAtmosferaVenus;
 GLuint texturaSuperficieTerra;
 GLuint texturaAtmosferaTerra;
 GLuint texturaLua;
@@ -264,13 +266,21 @@ void Inicializa (void){
 	texturaDoSol = carregaTextura(solTextura);
 	delete solTextura;
 
-	Textura* superficieMercurioTextura = carregarImagemBMP("Mercurio.bmp");
+    Textura* superficieMercurioTextura = carregarImagemBMP("Mercurio.bmp");
     texturaSuperficieMercurio = carregaTextura(superficieMercurioTextura);
     delete superficieMercurioTextura;
+
+    Textura* superficiePhobostextura = carregarImagemBMP("Phobos.bmp");
+    texturaPhobos = carregaTextura(superficiePhobostextura);
+    delete superficiePhobostextura;
 
     Textura* superficieVenusTextura = carregarImagemBMP("Venus.bmp");
     texturaSuperficieVenus = carregaTextura(superficieVenusTextura);
     delete superficieVenusTextura;
+	
+    Textura* atmosferaVenusTextura = carregarImagemBMP("AtmosferaVenus.bmp");
+    texturaAtmosferaVenus = carregaTextura(atmosferaVenusTextura);
+    delete atmosferaVenusTextura;
 
     Textura* superficieTerraTextura = carregarImagemBMP("Terra.bmp");
     texturaSuperficieTerra = carregaTextura(superficieTerraTextura);
@@ -951,8 +961,19 @@ void desenharEsfera(double raio, double distancia, double inclinacaoX, double an
         gluQuadricTexture(quadric, 1);
         gluSphere(quadric, raio, 20, 20);
         glDisable(GL_TEXTURE_2D);
-        }
+	   glEnable(GL_BLEND);
+        //texturaAtmosferaVenus
+        glColor4f(1, 1, 0, 0.20);
+        glBindTexture(GL_TEXTURE_2D, texturaAtmosferaVenus);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        gluQuadricTexture(quadric, 1);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        gluSphere(quadric, raio * 1.12, 20, 20);
 
+        glDisable(GL_BLEND);
+        glDisable(GL_TEXTURE_2D);
+        }
     else if(strcmp(nome, "Terra") == 0){
         GLUquadric *quadric = gluNewQuadric();
         glEnable(GL_TEXTURE_2D);
@@ -1110,7 +1131,20 @@ void desenharSatelitesNaturais(double raio, double distancia, double inclinacaoX
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         gluQuadricTexture(quadric, 1);
         gluSphere(quadric, raio, 20, 20);
-        glDisable(GL_TEXTURE_2D);}
+        glDisable(GL_TEXTURE_2D);
+    }
+   else if(strcmp(nome, "Phobos") == 0){
+        GLUquadric *quadric = gluNewQuadric();
+        glEnable(GL_TEXTURE_2D);
+        glColor3f(1.0, 1.0, 1.0);
+        //glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, texturaPhobos);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        gluQuadricTexture(quadric, 1);
+        gluSphere(quadric, raio, 20, 20);
+        glDisable(GL_TEXTURE_2D);
+        }
 
     glutSolidSphere(raio, 180, 180);
 
@@ -1173,7 +1207,7 @@ void desenharPlanoOrbital(){
     double A[] = {Xc, 0, Zc};
     double B[] = {Xc, 0, Zc + INCREMENTO_PLANO};
     double C[] = {Xc + INCREMENTO_PLANO, 0, Zc};
-    glColor3f(1, 1, 1);
+    glColor3f(0, 1, 0);
 
     //Vertical
     for(int i = 0; i < 120; i++){
@@ -1233,7 +1267,7 @@ void desenharPlanoOrbital(){
     C[1] = 0;
     C[2] = Zc_antigo;
 
-    for(int k = 0; k < 55; k++){
+    for(int k = 0; k < 60; k++){
         for(int l = 0; l < 1200; l++){
             glBegin(GL_TRIANGLE_STRIP);
 
