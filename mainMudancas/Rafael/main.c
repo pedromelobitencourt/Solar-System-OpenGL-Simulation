@@ -11,7 +11,7 @@
 #define INCREMENTO_PLANO 0.7
 
 
-//Rafael Pereira Duarte
+//Rafael Pereira Duarte :)
 //Site texturas: https://www.solarsystemscope.com/textures/
 
 /*
@@ -91,7 +91,6 @@ struct Asteroide{
     int tipo; //Se 1 == icosaedro, Se 2 == ..., Se 3 == ...
 };
 
-//Asteroides para o cinturao
 Asteroide asteroide1;
 Asteroide asteroide2;
 Asteroide asteroide3;
@@ -199,7 +198,7 @@ GLdouble posicaoCamera1Y = 70;
 GLdouble posicaoCamera1X = 1;
 
 GLdouble posicaoCamera2Z = 0;
-GLdouble posicaoCamera2Y = 40;
+GLdouble posicaoCamera2Y = 30;
 GLdouble posicaoCamera2X = -70;
 
 GLdouble posicaoCamera3Z = 0;
@@ -266,7 +265,7 @@ void Inicializa (void){
 	texturaDoSol = carregaTextura(solTextura);
 	delete solTextura;
 
-    Textura* superficieMercurioTextura = carregarImagemBMP("Mercurio.bmp");
+	Textura* superficieMercurioTextura = carregarImagemBMP("Mercurio.bmp");
     texturaSuperficieMercurio = carregaTextura(superficieMercurioTextura);
     delete superficieMercurioTextura;
 
@@ -277,7 +276,7 @@ void Inicializa (void){
     Textura* superficieVenusTextura = carregarImagemBMP("Venus.bmp");
     texturaSuperficieVenus = carregaTextura(superficieVenusTextura);
     delete superficieVenusTextura;
-	
+
     Textura* atmosferaVenusTextura = carregarImagemBMP("AtmosferaVenus.bmp");
     texturaAtmosferaVenus = carregaTextura(atmosferaVenusTextura);
     delete atmosferaVenusTextura;
@@ -286,13 +285,13 @@ void Inicializa (void){
     texturaSuperficieTerra = carregaTextura(superficieTerraTextura);
     delete superficieTerraTextura;
 
+    Textura* atmosferaTerraTextura = carregarImagemBMP("AtmosferaTerra.bmp");
+    texturaAtmosferaTerra = carregaTextura(atmosferaTerraTextura);
+    delete atmosferaTerraTextura;
+
     Textura* superficieLuatextura = carregarImagemBMP("Lua.bmp");
     texturaLua = carregaTextura(superficieLuatextura);
     delete superficieLuatextura;
-
-    Textura* atmosferaTerraTextura = carregarImagemBMP("Atmosfera.bmp");
-    texturaAtmosferaTerra = carregaTextura(atmosferaTerraTextura);
-    delete atmosferaTerraTextura;
 
     Textura* superficieMarteTextura = carregarImagemBMP("Marte.bmp");
     texturaSuperficieMarte = carregaTextura(superficieMarteTextura);
@@ -378,7 +377,7 @@ void Inicializa (void){
     phobos.nome = "Phobos";
     phobos.velocidadeRotacao = marte.velocidadeRotacao;
 
-    jupiter.distanciaAteOSol = 28;
+    jupiter.distanciaAteOSol = 35;
     jupiter.inclinacaoX = 3.13;
     jupiter.raio = 3.5;
     jupiter.velocidadeDaOrbita = 1.31;
@@ -387,7 +386,7 @@ void Inicializa (void){
     jupiter.nome = "Jupiter";
     jupiter.velocidadeRotacao = 58.32;
 
-    saturno.distanciaAteOSol = 37;
+    saturno.distanciaAteOSol = 44;
     saturno.inclinacaoX = 26.7;
     saturno.raio = 3;
     saturno.velocidadeDaOrbita = 0.97;
@@ -396,7 +395,7 @@ void Inicializa (void){
     saturno.nome = "Saturno";
     saturno.velocidadeRotacao = 53.01;
 
-    uranos.distanciaAteOSol = 45.5;
+    uranos.distanciaAteOSol = 52.5;
     uranos.inclinacaoX = 47;
     uranos.raio = 2.5;
     uranos.velocidadeDaOrbita = 0.68;
@@ -405,7 +404,7 @@ void Inicializa (void){
     uranos.nome = "Urano";
     uranos.velocidadeRotacao = 34.3;
 
-    netuno.distanciaAteOSol = 53.6;
+    netuno.distanciaAteOSol = 60.6;
     netuno.inclinacaoX = 28.32;
     netuno.raio = 2.3;
     netuno.velocidadeDaOrbita = 0.54;
@@ -422,8 +421,7 @@ void Inicializa (void){
     //Tipo1 => Icosaedro
     //Tipo2 => Dodecaedro
     //Tipo3 => Octaedro
-    
-    //Todos os asteroides estao entre marte e jupiter, cada um com uma rotacao e distancia entre os dois planetas, mas com mesmas velocidades
+
     asteroide1.distancia = ((marte.distanciaAteOSol + jupiter.distanciaAteOSol)/2) + -1;
     asteroide1.rotacao = 70;
     asteroide1.velocidadeRotacao = 0.875;
@@ -961,7 +959,8 @@ void desenharEsfera(double raio, double distancia, double inclinacaoX, double an
         gluQuadricTexture(quadric, 1);
         gluSphere(quadric, raio, 20, 20);
         glDisable(GL_TEXTURE_2D);
-	   glEnable(GL_BLEND);
+
+        glEnable(GL_BLEND);
         //texturaAtmosferaVenus
         glColor4f(1, 1, 0, 0.20);
         glBindTexture(GL_TEXTURE_2D, texturaAtmosferaVenus);
@@ -974,11 +973,11 @@ void desenharEsfera(double raio, double distancia, double inclinacaoX, double an
         glDisable(GL_BLEND);
         glDisable(GL_TEXTURE_2D);
         }
+
     else if(strcmp(nome, "Terra") == 0){
         GLUquadric *quadric = gluNewQuadric();
         glEnable(GL_TEXTURE_2D);
         glColor3f(1.0, 1.0, 1.0);
-        //glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, texturaSuperficieTerra);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -1125,19 +1124,18 @@ void desenharSatelitesNaturais(double raio, double distancia, double inclinacaoX
         GLUquadric *quadric = gluNewQuadric();
         glEnable(GL_TEXTURE_2D);
         glColor3f(1.0, 1.0, 1.0);
-        //glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, texturaLua);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         gluQuadricTexture(quadric, 1);
         gluSphere(quadric, raio, 20, 20);
         glDisable(GL_TEXTURE_2D);
-    }
-   else if(strcmp(nome, "Phobos") == 0){
+        }
+
+    else if(strcmp(nome, "Phobos") == 0){
         GLUquadric *quadric = gluNewQuadric();
         glEnable(GL_TEXTURE_2D);
         glColor3f(1.0, 1.0, 1.0);
-        //glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, texturaPhobos);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -1336,7 +1334,6 @@ void Desenha(void)
 	desenharEsfera(uranos.raio, uranos.distanciaAteOSol, uranos.inclinacaoX, uranos.anguloRotacaoNoProprioEixo, uranos.orbita, uranos.nome, olharUranos);
 	desenharEsfera(netuno.raio, netuno.distanciaAteOSol, netuno.inclinacaoX, netuno.anguloRotacaoNoProprioEixo, netuno.orbita, netuno.nome, olharNetuno);
 	desenharEsfera(sol.raio, sol.distanciaAteOSol, sol.inclinacaoX, sol.anguloRotacaoNoProprioEixo, sol.orbita, sol.nome, false);
-	
 	desenharAsteroides(asteroide1.distancia, asteroide1.rotacao, asteroide1.tipo);
 	desenharAsteroides(asteroide2.distancia, asteroide2.rotacao, asteroide2.tipo);
 	desenharAsteroides(asteroide3.distancia, asteroide3.rotacao, asteroide3.tipo);
@@ -1432,7 +1429,7 @@ void Desenha(void)
 	desenharAsteroides(asteroide93.distancia, asteroide93.rotacao, asteroide90.tipo);
 	desenharAsteroides(asteroide94.distancia, asteroide94.rotacao, asteroide90.tipo);
 	desenharAsteroides(asteroide95.distancia, asteroide95.rotacao, asteroide90.tipo);
-	
+
 	glutSwapBuffers();
  }
 
@@ -1731,7 +1728,7 @@ void Animacao(int periodo){
         asteroide18.rotacao += asteroide18.velocidadeRotacao;
         asteroide19.rotacao += asteroide19.velocidadeRotacao;
         asteroide20.rotacao += asteroide20.velocidadeRotacao;
-	asteroide21.rotacao += asteroide21.velocidadeRotacao;
+        asteroide21.rotacao += asteroide21.velocidadeRotacao;
         asteroide22.rotacao += asteroide22.velocidadeRotacao;
         asteroide23.rotacao += asteroide23.velocidadeRotacao;
         asteroide24.rotacao += asteroide24.velocidadeRotacao;
@@ -2079,8 +2076,6 @@ void teclasEspeciais(int key, int x, int y){ //Função que nos permite usar tec
             camera4Ligada = false;
         }
     }
-
-
     glutPostRedisplay();
 }
 
