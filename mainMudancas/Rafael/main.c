@@ -10,6 +10,7 @@
 #define ALTURA 500
 #define INCREMENTO_PLANO 0.7
 
+
 //Rafael Pereira Duarte
 //Site texturas: https://www.solarsystemscope.com/textures/
 
@@ -120,7 +121,7 @@ GLdouble posicaoCamera1Y = 70;
 GLdouble posicaoCamera1X = 1;
 
 GLdouble posicaoCamera2Z = 0;
-GLdouble posicaoCamera2Y = 7;
+GLdouble posicaoCamera2Y = 40;
 GLdouble posicaoCamera2X = -70;
 
 GLdouble posicaoCamera3Z = 0;
@@ -497,10 +498,10 @@ void desenharSkyboxes(){
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glBegin(GL_POLYGON);
-            glTexCoord2f(-1.0, 0.0); glVertex3f(90, -90, -200);
-            glTexCoord2f(2.0, 2.0); glVertex3f(90, -90, 200);
-            glTexCoord2f(2.0, 0.0); glVertex3f(90, 120, -200);
-            glTexCoord2f(-1.0, 2.0); glVertex3f(90, 120, 200);
+        glTexCoord2f(-1.0, 0.0); glVertex3f(90, -90, -200);//1
+        glTexCoord2f(2.0, 2.0); glVertex3f(90, -90, 200);//2
+        glTexCoord2f(-1.0, 2.0); glVertex3f(90, 120, 200);//4
+        glTexCoord2f(2.0, 0.0); glVertex3f(90, 120, -200);//3
         glEnd();
         glDisable(GL_TEXTURE_2D);
 
