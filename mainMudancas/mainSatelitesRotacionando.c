@@ -1,17 +1,19 @@
 #include <GL/glew.h>
 #include <GL/freeglut.h>
 #include <gl/glut.h>
-#include <stdio.h>
+#include <stdio.h> //Digitar as intruções no prompt de comando
 #include <string.h>
-#include <math.h>
-#include "carregartextura.h"
+#include <math.h> //Talvez tirar
+#include "carregartextura.h" //Biblioteca para carregar texturas 3D
 
-#define LARGURA 750
-#define ALTURA 500
-#define INCREMENTO_PLANO 0.7
+#define LARGURA 750 //Ver se está usando
+#define ALTURA 500 //Ver se está usando
+#define INCREMENTO_PLANO 0.7 //Ver se está usando
 
 //Pedro Vitor Melo Bitencourt
 //Site texturas: https://www.solarsystemscope.com/textures/
+
+///Instruções
 
 /*
 'a' -> Ativa ou desativa o plano Orbital
@@ -37,6 +39,7 @@
 'MOUSE DIREITO' -> -Zoom
 */
 
+//Função para carregar uma textura (tem que estar no formato BMP)
 GLuint carregaTextura(Textura* imagemBMP) {
 	GLuint textureId;
 	glGenTextures(1, &textureId);
@@ -45,6 +48,7 @@ GLuint carregaTextura(Textura* imagemBMP) {
 	return textureId;
 }
 
+///Texturas planetas e luas
 GLuint texturaDasEstrelas;
 GLuint texturaDoSol;
 GLuint texturaSuperficieMercurio;
@@ -112,6 +116,8 @@ Asteroide asteroide20;
 
 GLfloat angle, fAspect;
 
+///Posições câmeras
+
 GLdouble posicaoOlharZ = 0;
 GLdouble posicaoOlharY = 0;
 GLdouble posicaoOlharX = 0;
@@ -130,7 +136,7 @@ GLdouble posicaoCamera3X = 75;
 
 GLdouble posicaoCamera4Z = 0;
 GLdouble posicaoCamera4Y = 80;
-GLdouble posicaoCamera4X = 75;//
+GLdouble posicaoCamera4X = 75;
 
 GLdouble posicaoCameraZ = posicaoCamera4Z;
 GLdouble posicaoCameraY = posicaoCamera4Y;
@@ -146,16 +152,23 @@ GLdouble posicaoCameraZ_antigo;
 
 GLdouble distanciaDoPlaneta = 5;
 
+///Instruções
+
 bool animacaoOn = true;
-bool camera1Ligada = false;
-bool camera2Ligada = false;
-bool camera3Ligada = false;
-bool camera4Ligada = true;
-bool precisaRotacionar = false;
-bool estaPausado = false;
-bool mostrarNomesPlanetas = false;
+bool camera1Ligada = false; //Se deslocar ou não para a câmera 1
+bool camera2Ligada = false; //Se deslocar ou não para a câmera 2
+bool camera3Ligada = false; //Se deslocar ou não para a câmera 3
+bool camera4Ligada = true; //Se deslocar ou não para a câmera 4
+bool estaPausado = false; //Não sei se está usando
+bool mostrarNomesPlanetas = false; //Mostrar ou esconder nomes dos planetas e luas
+bool verOrbitas = true; //Mostrar ou esconder orbitas
+bool comLuzDoSolOn = false; //Pode ser ativado quando a iluminação está desligada
+bool planoOrbitalAtivado = false; //Mostrar ou esconder plano orbital
+bool iluminacaoEstaLigada = false; //Ligar ou desligar iluminação
+int tipoIluminacao = 0; //Há três tipos de iluminações que pode ver quando a iluminação está desligada
 
 ///Visitar os planetas
+
 bool olharMercurio = false;
 bool olharVenus = false;
 bool olharTerra = false;
@@ -165,13 +178,7 @@ bool olharSaturno = false;
 bool olharUranos = false;
 bool olharNetuno = false;
 
-///
 
-bool verOrbitas = true;
-bool comLuzDoSolOn = false;
-bool planoOrbitalAtivado = false;
-bool iluminacaoEstaLigada = false;
-int tipoIluminacao = 0;
 
 void Inicializa (void){
 
@@ -179,6 +186,8 @@ void Inicializa (void){
 
     glEnable(GL_NORMALIZE);
 	glEnable(GL_COLOR_MATERIAL);
+
+	///Carregando texturas
 
 	Textura* estrelaTextura = carregarImagemBMP("Estrelas_SkyBoxes.bmp");
 	texturaDasEstrelas = carregaTextura(estrelaTextura);
@@ -227,6 +236,8 @@ void Inicializa (void){
     Textura* superficieNetunoTextura = carregarImagemBMP("Netuno.bmp");
     texturaSuperficieNetuno = carregaTextura(superficieNetunoTextura);
     delete superficieNetunoTextura;
+
+    ///Inicializando os valores dos objetos criados
 
     sol.distanciaAteOSol = 0;
     sol.inclinacaoX = 0;
@@ -504,7 +515,8 @@ void desenharSkyboxes(){
         glTexCoord2f(0.0, 8.0); glVertex3f(-100, -90, -200);
         glEnd();
         glDisable(GL_TEXTURE_2D);
-        ///Plano atrás do Sistema Solar
+
+        ///Plano atrás (no início - caso não se desloque) do Sistema Solar
         glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, texturaDasEstrelas);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -524,11 +536,11 @@ void desenharEsfera(double raio, double distancia, double inclinacaoX, double an
 
     glPushMatrix(); //Sistema padrão de coordenadas
     glColor3f(0, 1, 0);
-    glRotatef(orbita, 0, 1, 0);
-    glTranslatef(distancia , 0, 0);//angulo, x, y, z
+    glRotatef(orbita, 0, 1, 0); //rotacionar em volta da estrela (Movimento de translação)
+    glTranslatef(distancia, 0, 0);
     glPushMatrix();
-    glRotatef(inclinacaoX, 1, 0, 0); //angulo, x, y, z
-    glRotatef(anguloRotacaoNoProprioEixo, 0, 1, 0);
+    glRotatef(inclinacaoX, 1, 0, 0); //Sua inclinação
+    glRotatef(anguloRotacaoNoProprioEixo, 0, 1, 0); //Movimento de rotação
     glRotatef(90, 1, 0, 0);
     glPushMatrix();
 
@@ -553,14 +565,14 @@ void desenharEsfera(double raio, double distancia, double inclinacaoX, double an
         //posicaoOlharY = 0;
         //posicaoOlharX = 0;
     }
-     //Colocamos textura
+
+    ///Atribuindo textura
 
     if(strcmp(nome, "Sol") == 0){
         GLUquadric *quadric = gluNewQuadric();
         glEnable(GL_TEXTURE_2D);
 
         glColor3f(1.0, 1.0, 1.0);
-        //glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, texturaDoSol);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -595,7 +607,6 @@ void desenharEsfera(double raio, double distancia, double inclinacaoX, double an
         gluSphere(quadric, raio, 20, 20);
         glDisable(GL_TEXTURE_2D);
         }
-
     else if(strcmp(nome, "Venus") == 0){
         GLUquadric *quadric = gluNewQuadric();
         glEnable(GL_TEXTURE_2D);
@@ -606,21 +617,23 @@ void desenharEsfera(double raio, double distancia, double inclinacaoX, double an
         gluQuadricTexture(quadric, 1);
         gluSphere(quadric, raio, 20, 20);
         glDisable(GL_TEXTURE_2D);
-        }
-
+    }
     else if(strcmp(nome, "Terra") == 0){
+
+        //Superfície da Terra
+
         GLUquadric *quadric = gluNewQuadric();
         glEnable(GL_TEXTURE_2D);
         glColor3f(1.0, 1.0, 1.0);
-        //glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, texturaSuperficieTerra);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         gluQuadricTexture(quadric, 1);
         gluSphere(quadric, raio, 20, 20);
 
+        //Atmosfera da Terra
+
         glEnable(GL_BLEND);
-        //texturaAtmosferaTerra
         glColor4f(1, 1, 0, 0.20);
         glBindTexture(GL_TEXTURE_2D, texturaAtmosferaTerra);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -636,7 +649,6 @@ void desenharEsfera(double raio, double distancia, double inclinacaoX, double an
         GLUquadric *quadric = gluNewQuadric();
         glEnable(GL_TEXTURE_2D);
         glColor3f(1.0, 1.0, 1.0);
-        //glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, texturaSuperficieMarte);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -644,12 +656,10 @@ void desenharEsfera(double raio, double distancia, double inclinacaoX, double an
         gluSphere(quadric, raio, 20, 20);
         glDisable(GL_TEXTURE_2D);
         }
-
     else if(strcmp(nome, "Jupiter") == 0){
         GLUquadric *quadric = gluNewQuadric();
         glEnable(GL_TEXTURE_2D);
         glColor3f(1.0, 1.0, 1.0);
-        //glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, texturaSuperficieJupiter);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -657,12 +667,10 @@ void desenharEsfera(double raio, double distancia, double inclinacaoX, double an
         gluSphere(quadric, raio, 20, 20);
         glDisable(GL_TEXTURE_2D);
         }
-
     else if(strcmp(nome, "Saturno") == 0){
         GLUquadric *quadric = gluNewQuadric();
         glEnable(GL_TEXTURE_2D);
         glColor3f(1.0, 1.0, 1.0);
-        //glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, texturaSuperficieSaturno);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -670,12 +678,10 @@ void desenharEsfera(double raio, double distancia, double inclinacaoX, double an
         gluSphere(quadric, raio, 20, 20);
         glDisable(GL_TEXTURE_2D);
         }
-
     else if(strcmp(nome, "Urano") == 0){
         GLUquadric *quadric = gluNewQuadric();
         glEnable(GL_TEXTURE_2D);
         glColor3f(1.0, 1.0, 1.0);
-        //glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, texturaSuperficieUrano);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -683,12 +689,10 @@ void desenharEsfera(double raio, double distancia, double inclinacaoX, double an
         gluSphere(quadric, raio, 20, 20);
         glDisable(GL_TEXTURE_2D);
         }
-
     else if(strcmp(nome, "Netuno") == 0){
         GLUquadric *quadric = gluNewQuadric();
         glEnable(GL_TEXTURE_2D);
         glColor3f(1.0, 1.0, 1.0);
-        //glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, texturaSuperficieNetuno);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -696,7 +700,6 @@ void desenharEsfera(double raio, double distancia, double inclinacaoX, double an
         gluSphere(quadric, raio, 20, 20);
         glDisable(GL_TEXTURE_2D);
         }
-
     else{
         glutSolidSphere(raio, 180, 180);
     }
@@ -729,6 +732,9 @@ void desenharEsfera(double raio, double distancia, double inclinacaoX, double an
     glPopMatrix();
 
     glColor3f(0, 1, 1);
+
+    //Mostrando nomes dos planetas
+
     if(mostrarNomesPlanetas){
         glRasterPos3f(0, raio + 2, 0);
         for(int i = 0; i < strlen(nome); i++){
@@ -755,11 +761,12 @@ void desenharSatelitesNaturais(double raio, double distancia, double inclinacaoX
 
     glPushMatrix();
 
+    ///Atribuindo textura
+
     if(strcmp(nome, "Lua") == 0){
         GLUquadric *quadric = gluNewQuadric();
         glEnable(GL_TEXTURE_2D);
         glColor3f(1.0, 1.0, 1.0);
-        //glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, texturaLua);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -770,6 +777,8 @@ void desenharSatelitesNaturais(double raio, double distancia, double inclinacaoX
     glutSolidSphere(raio, 180, 180);
 
     glPopMatrix();
+
+    //Mostrando nome dos satélites naturais
 
     glColor3f(0, 1, 1);
     if(mostrarNomesPlanetas){
@@ -1031,6 +1040,8 @@ void ligaDesligaMudaIluminacao(){
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
 
+    //Parâmetros para definir a fonte de luz
+
     float iluminacaoDifusaEEspecular[] = {0, 0, 0, 0};
     float iluminacaoAmbiente[] = {0, 0, 0, 0};
     float iluminacaoEmissiva[] = {0, 0, 0, 0};
@@ -1040,8 +1051,7 @@ void ligaDesligaMudaIluminacao(){
     float atenuacaoDaIluminacao = 0;
 
     if(iluminacaoEstaLigada){
-        if(tipoIluminacao == 0){
-            printf("Chegou iluminacao 0");
+        if(tipoIluminacao == 0){ //Iluminação ligada e tipoIluminação escolhido
             iluminacaoDifusaEEspecular[0] = 1;
             iluminacaoDifusaEEspecular[1] = 1;
             iluminacaoDifusaEEspecular[2] = 1;
@@ -1082,8 +1092,7 @@ void ligaDesligaMudaIluminacao(){
             glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, anguloFonteDeLuz);
             glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, atenuacaoDaIluminacao);
         }
-        else if(tipoIluminacao == 1){
-            printf("Chegou iluminacao 1");
+        else if(tipoIluminacao == 1){ //Iluminação ligada e tipoIluminação1 escolhido
             iluminacaoDifusaEEspecular[0] = 1;
             iluminacaoDifusaEEspecular[1] = 1;
             iluminacaoDifusaEEspecular[2] = 1;
@@ -1124,8 +1133,7 @@ void ligaDesligaMudaIluminacao(){
             glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, anguloFonteDeLuz);
             glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, atenuacaoDaIluminacao);
         }
-        else if(tipoIluminacao == 2){
-            printf("Chegou iluminacao 2");
+        else if(tipoIluminacao == 2){ //Iluminação ligada e tipoIluminação 2 escolhido
             iluminacaoDifusaEEspecular[0] = 1;
             iluminacaoDifusaEEspecular[1] = 1;
             iluminacaoDifusaEEspecular[2] = 1;
@@ -1168,7 +1176,7 @@ void ligaDesligaMudaIluminacao(){
 
         }
     }
-    else if(!iluminacaoEstaLigada && comLuzDoSolOn == true){
+    else if(!iluminacaoEstaLigada && comLuzDoSolOn == true){ //Iluminação desligada e luz do Sol ligada
         iluminacaoDifusaEEspecular[0] = 1;
         iluminacaoDifusaEEspecular[1] = 1;
         iluminacaoDifusaEEspecular[2] = 1;
@@ -1210,12 +1218,10 @@ void ligaDesligaMudaIluminacao(){
         glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, atenuacaoDaIluminacao);
 
     }
-    else if(!iluminacaoEstaLigada && !comLuzDoSolOn){
+    else if(!iluminacaoEstaLigada && !comLuzDoSolOn){ //Iluminação desligada e iluminação do Sol desligada
         glDisable(GL_LIGHTING);
         glDisable(GL_LIGHT0);
     }
-
-
 
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
@@ -1226,6 +1232,9 @@ void Animacao(int periodo){
     ligaDesligaMudaIluminacao();
 
     if(animacaoOn == true){
+
+        ///Promovendo a animação (o movimento)
+
         mercurio.orbita += mercurio.velocidadeDaOrbita;
         mercurio.anguloRotacaoNoProprioEixo += mercurio.velocidadeRotacao;
 
@@ -1551,7 +1560,6 @@ void teclasEspeciais(int key, int x, int y){ //Função que nos permite usar tec
             camera4Ligada = false;
         }
     }
-
 
     glutPostRedisplay();
 }
