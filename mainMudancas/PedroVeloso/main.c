@@ -363,10 +363,10 @@ void Inicializa (void){
 
 
     for(int i=0;i<95;i++){
-        asteroide[i].distancia=((marte.distanciaAteOSol + jupiter.distanciaAteOSol)/2) + ((float)rand()/RAND_MAX*2.0-1.0)*2;
-        asteroide[i].rotacao = rand()%440;
-        asteroide[i].velocidadeRotacao = ((float)rand()/RAND_MAX)/2+0.5;
-        asteroide[i].tipo = rand()%3+1;
+        asteroide[i].distancia=((marte.distanciaAteOSol + jupiter.distanciaAteOSol)/2) + ((float)rand()/RAND_MAX*2.0-1.0)*2; //float aleatorio de -2 a 2
+        asteroide[i].rotacao = rand()%440;//int de 0 a 439
+        asteroide[i].velocidadeRotacao = ((float)rand()/RAND_MAX)/2+0.5;//float de 0.5 a 1
+        asteroide[i].tipo = rand()%3+1;//int de 1 a 3
     }
 
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
