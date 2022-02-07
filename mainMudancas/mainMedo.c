@@ -169,12 +169,12 @@ void imprimirInstrucoes(){
     printf("Pressione 'SETA PARA CIMA' para se deslocar para a camera1\n");
     printf("Pressione 'SETA PARA ESQUERDA' para se deslocar para a camera2\n");
     printf("Pressione 'SETA PARA BAIXO' para se deslocar para a camera3\n");
-    printf("Pressione 'PAGE UP' para mover a camera no eixo X positivo\n");
-    printf("Pressione 'PAGE DOWN' para mover a camera no eixo X negativo\n");
-    printf("Pressione 'F1' para mover a camera no eixo Y positivo\n");
-    printf("Pressione 'F2' para mover a camera no eixo Y negativo\n");
-    printf("Pressione 'HOME' para mover a camera no eixo Z positivo\n");
-    printf("Pressione 'END' para mover a camera no eixo Z negativo\n");
+    printf("Pressione 'PAGE UP' para mover o olhar da camera no eixo X positivo\n");
+    printf("Pressione 'PAGE DOWN' para mover o olhar da camera no eixo X negativo\n");
+    printf("Pressione 'F1' para mover o olhar da camera no eixo Y positivo\n");
+    printf("Pressione 'F2' para mover o olhar da camera no eixo Y negativo\n");
+    printf("Pressione 'HOME' para mover o olhar da camera no eixo Z positivo\n");
+    printf("Pressione 'END' para mover o olhar da camera no eixo Z negativo\n");
     printf("Pressione 'BOTAO ESQUERDO DO MOUSE' para dar ZOOM IN\n");
     printf("Pressione 'BOTAO DIREITO DO MOUSE' para dar ZOOM OUT\n");
     printf("Pressione 'i' para ativar ou desativar a iluminacao da fonte de luz\n");
@@ -244,6 +244,10 @@ void imprimirEstados(){
     else{
         printf("Plano orbital: desativado\n");
     }
+    printf("Zoom da camera: %.2f\n", angle);
+    printf("Posicao X olhar da camera: %.2f\n", posicaoOlharX);
+    printf("Posicao Y olhar da camera: %.2f\n", posicaoOlharY);
+    printf("Posicao Z olhar da camera: %.2f\n", posicaoOlharZ);
 }
 
 void Inicializa (void){
