@@ -243,10 +243,10 @@ void imprimirEstados(){
     else{
         printf("Plano orbital: desativado\n");
     }
-    printf("Zoom da camera: %.2f (inversamente proporcional)\n", angle);
-    printf("Posicao X olhar da camera: %.2f\n", posicaoOlharX);
-    printf("Posicao Y olhar da camera: %.2f\n", posicaoOlharY);
-    printf("Posicao Z olhar da camera: %.2f\n", posicaoOlharZ);
+    printf("Zoom da camera: %.2f (inversamente proporcional) (Padrao: 80)\n", angle);
+    printf("Posicao X olhar da camera: %.2f (Padrao: 0)\n", posicaoOlharX);
+    printf("Posicao Y olhar da camera: %.2f (Padrao: 0)\n", posicaoOlharY);
+    printf("Posicao Z olhar da camera: %.2f (Padrao: 0)\n", posicaoOlharZ);
 }
 
 void Inicializa (void){
