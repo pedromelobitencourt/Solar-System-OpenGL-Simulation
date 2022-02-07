@@ -17,7 +17,6 @@ Texturas usadas:
 #include <gl/glut.h>
 #include <stdio.h> //Digitar as intruções no prompt de comando
 #include <string.h>
-#include <math.h> //Talvez tirar
 #include "carregartextura.h" //Biblioteca para carregar texturas 3D
 #include <stdlib.h> //para o system("cls")
 #define INCREMENTO_PLANO 0.7
@@ -244,7 +243,7 @@ void imprimirEstados(){
     else{
         printf("Plano orbital: desativado\n");
     }
-    printf("Zoom da camera: %.2f\n", angle);
+    printf("Zoom da camera: %.2f (inversamente proporcional)\n", angle);
     printf("Posicao X olhar da camera: %.2f\n", posicaoOlharX);
     printf("Posicao Y olhar da camera: %.2f\n", posicaoOlharY);
     printf("Posicao Z olhar da camera: %.2f\n", posicaoOlharZ);
@@ -370,7 +369,6 @@ void Inicializa (void){
     marte.anguloRotacaoNoProprioEixo = 0;
     marte.orbita = 0;
     marte.nome = "Marte";
-    //marte.velocidadeRotacao = 23.328;
     marte.velocidadeRotacao = 8.2;
 
     phobos.distanciaAteOSol = marte.distanciaAteOSol + marte.raio + 0.875;
@@ -399,7 +397,6 @@ void Inicializa (void){
     saturno.orbita = 0;
     saturno.nome = "Saturno";
     saturno.velocidadeRotacao = 5;
-    //saturno.velocidadeRotacao = 53.01;
 
     titan.distanciaAteOSol = saturno.distanciaAteOSol + saturno.raio + 2.050515;
     titan.inclinacaoX = 0;
@@ -437,14 +434,6 @@ void Inicializa (void){
     //Tipo1 => Icosaedro
     //Tipo2 => Dodecaedro
     //Tipo3 => Octaedro
-
-    /*
-     *
-     asteroide1.distancia = ((marte.distanciaAteOSol + jupiter.distanciaAteOSol)/2) + -1;
-     asteroide1.rotacao = 70;
-     asteroide1.velocidadeRotacao = 0.875;
-     asteroide1.tipo = 1;
-     */
 
 
     for(int i=0;i<numAsteroides;i++){
@@ -700,7 +689,6 @@ void desenharEsfera(double raio, double distancia, double inclinacaoX, double an
 
     if(strcmp(nome, "Saturno") == 0){
         glColor3f(0.5, 0.35, 0.15);
-        //glRotatef(90, 1, 0, 0);
         glutWireTorus(0.235, raio + 0.8, 100, 100);
     }
 
@@ -716,7 +704,6 @@ void desenharEsfera(double raio, double distancia, double inclinacaoX, double an
 
     if(strcmp(nome, "Urano") == 0){
         glColor3f(0, 0, 1);
-        //glRotatef(90, 1, 0, 0);
         glutWireTorus(0.07, raio + 0.38, 100, 100);
     }
 
@@ -959,6 +946,8 @@ void Desenha(void)
         desenharOrbitas();
     }
 
+    //Desenhando os planetas e os satelites naturais
+
 	desenharEsfera(mercurio.raio, mercurio.distanciaAteOSol, mercurio.inclinacaoX, mercurio.anguloRotacaoNoProprioEixo, mercurio.orbita, mercurio.nome);
 	desenharEsfera(venus.raio, venus.distanciaAteOSol, venus.inclinacaoX, venus.anguloRotacaoNoProprioEixo, venus.orbita, venus.nome);
 	desenharEsfera(terra.raio, terra.distanciaAteOSol, terra.inclinacaoX, terra.anguloRotacaoNoProprioEixo, terra.orbita, terra.nome);
@@ -971,6 +960,8 @@ void Desenha(void)
 	desenharEsfera(uranos.raio, uranos.distanciaAteOSol, uranos.inclinacaoX, uranos.anguloRotacaoNoProprioEixo, uranos.orbita, uranos.nome);
 	desenharEsfera(netuno.raio, netuno.distanciaAteOSol, netuno.inclinacaoX, netuno.anguloRotacaoNoProprioEixo, netuno.orbita, netuno.nome);
 	desenharEsfera(sol.raio, sol.distanciaAteOSol, sol.inclinacaoX, sol.anguloRotacaoNoProprioEixo, sol.orbita, sol.nome);
+
+	//Desenhando asteroides
 
     for(int i =0;i<numAsteroides;i++){
         desenharAsteroides(asteroide[i].distancia, asteroide[i].rotacao, asteroide[i].tipo);
@@ -1400,14 +1391,14 @@ void teclado(unsigned char key, int x, int y) {
         break;
 
        case 's':
-        if(comLuzDoSolOn && !iluminacaoEstaLigada){
-            comLuzDoSolOn = false;
-        }
-        else if(!comLuzDoSolOn && !iluminacaoEstaLigada){
-            comLuzDoSolOn = true;
-        }
-        imprimirInstrucoes();
-        imprimirEstados();
+            if(comLuzDoSolOn && !iluminacaoEstaLigada){
+                comLuzDoSolOn = false;
+            }
+            else if(!comLuzDoSolOn && !iluminacaoEstaLigada){
+                comLuzDoSolOn = true;
+            }
+            imprimirInstrucoes();
+            imprimirEstados();
         break;
 
        case 'a':
@@ -1466,6 +1457,8 @@ void teclasEspeciais(int key, int x, int y){ //Função que nos permite usar tec
             camera2Ligada = false;
             camera3Ligada = false;
             camera4Ligada = false;
+            imprimirInstrucoes();
+            imprimirEstados();
         }
     }
 
@@ -1476,6 +1469,8 @@ void teclasEspeciais(int key, int x, int y){ //Função que nos permite usar tec
             camera2Ligada = false;
             camera3Ligada = false;
             camera4Ligada = false;
+            imprimirInstrucoes();
+            imprimirEstados();
         }
     }
 
@@ -1486,6 +1481,8 @@ void teclasEspeciais(int key, int x, int y){ //Função que nos permite usar tec
             camera2Ligada = false;
             camera3Ligada = false;
             camera4Ligada = false;
+            imprimirInstrucoes();
+            imprimirEstados();
         }
     }
 
@@ -1496,6 +1493,8 @@ void teclasEspeciais(int key, int x, int y){ //Função que nos permite usar tec
             camera2Ligada = false;
             camera3Ligada = false;
             camera4Ligada = false;
+            imprimirInstrucoes();
+            imprimirEstados();
         }
     }
 
@@ -1506,6 +1505,8 @@ void teclasEspeciais(int key, int x, int y){ //Função que nos permite usar tec
             camera2Ligada = false;
             camera3Ligada = false;
             camera4Ligada = false;
+            imprimirInstrucoes();
+            imprimirEstados();
         }
     }
 
@@ -1516,6 +1517,8 @@ void teclasEspeciais(int key, int x, int y){ //Função que nos permite usar tec
             camera2Ligada = false;
             camera3Ligada = false;
             camera4Ligada = false;
+            imprimirInstrucoes();
+            imprimirEstados();
         }
     }
 
@@ -1526,11 +1529,19 @@ void teclasEspeciais(int key, int x, int y){ //Função que nos permite usar tec
 void GerenciaMouse(int button, int state, int x, int y){
 	if (button == GLUT_LEFT_BUTTON)
 		if (state == GLUT_DOWN) {  // Zoom-in
-			if (angle >= 20) angle -= 5;
+			if (angle >= 20){
+                angle -= 5;
+                imprimirInstrucoes();
+                imprimirEstados();
+			}
 		}
 	if (button == GLUT_RIGHT_BUTTON)
 		if (state == GLUT_DOWN) {  // Zoom-out
-			if (angle <= 100) angle += 5;
+			if (angle <= 100){
+                angle += 5;
+                imprimirInstrucoes();
+                imprimirEstados();
+			}
 		}
 	EspecificaParametrosVisualizacao();
 	glutPostRedisplay();
