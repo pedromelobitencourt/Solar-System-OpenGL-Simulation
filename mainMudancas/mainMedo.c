@@ -5,6 +5,7 @@
 #include <string.h>
 #include <math.h> //Talvez tirar
 #include "carregartextura.h" //Biblioteca para carregar texturas 3D
+#include <stdlib.h>
 
 #define LARGURA 750 //Ver se está usando
 #define ALTURA 500 //Ver se está usando
@@ -138,14 +139,13 @@ GLdouble posicaoCameraZ_antigo;
 
 GLdouble distanciaDoPlaneta = 5; //Ver se está usando
 
-///Instruções
+///Estados
 
 bool animacaoOn = true;
 bool camera1Ligada = false; //Se deslocar ou não para a câmera 1
 bool camera2Ligada = false; //Se deslocar ou não para a câmera 2
 bool camera3Ligada = false; //Se deslocar ou não para a câmera 3
 bool camera4Ligada = true; //Se deslocar ou não para a câmera 4
-bool estaPausado = false; //Não sei se está usando
 bool mostrarNomesPlanetas = false; //Mostrar ou esconder nomes dos planetas e luas
 bool verOrbitas = true; //Mostrar ou esconder orbitas
 bool comLuzDoSolOn = false; //Pode ser ativado quando a iluminação está desligada
@@ -164,7 +164,26 @@ bool olharSaturno = false;
 bool olharUranos = false;
 bool olharNetuno = false;
 
+void imprimirInstrucoes(){
+    system("cls"); //Limpar a tela do prompt
+    printf("Pressione 'SETA PARA CIMA' para se deslocar para a camera1\n");
+}
 
+void imprimirEstados(){
+    printf("\n");
+    if(animacaoOn){
+        printf("Animacao: despausada\n");
+    }
+    else{
+        printf("Animacao: pausada\n");
+    }
+    if(iluminacaoEstaLigada){
+        printf("Iluminacao: ligada\n");
+    }
+    else{
+        printf("Iluminacao: desligada\n");
+    }
+}
 
 void Inicializa (void){
 
@@ -1292,6 +1311,8 @@ void teclado(unsigned char key, int x, int y) {
                    && olharSaturno == false && olharTerra == false && olharUranos == false && olharVenus == false){
                 animacaoOn = true;
            }
+           imprimirInstrucoes();
+           imprimirEstados();
         break;
 
        case 'z':
