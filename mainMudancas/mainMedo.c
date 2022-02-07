@@ -1,3 +1,17 @@
+/*
+Membros do grupo:
+    Pedro Vitor Melo Bitencourt (20213001540)
+    Rafael Pereira Duarte (20213005146)
+    Pedro Veloso Inácio de Oliveira (20213004837)
+    Sérgio Henrique Mendes de Assis (20213005182)
+
+Orientador:
+    Glender Brás
+
+Texturas usadas:
+    https://www.solarsystemscope.com/textures/
+*/
+
 #include <GL/glew.h>
 #include <GL/freeglut.h>
 #include <gl/glut.h>
@@ -5,14 +19,8 @@
 #include <string.h>
 #include <math.h> //Talvez tirar
 #include "carregartextura.h" //Biblioteca para carregar texturas 3D
-#include <stdlib.h>
-
-//#define LARGURA 750 //Ver se está usando
-//#define ALTURA 500 //Ver se está usando
+#include <stdlib.h> //para o system("cls")
 #define INCREMENTO_PLANO 0.7
-
-//Pedro Vitor Melo Bitencourt, Rafael Pereira Duarte e Pedro Veloso Inácio de Oliveira
-//Site texturas: https://www.solarsystemscope.com/textures/
 
 ///Instruções
 
@@ -1534,6 +1542,8 @@ int main(int argc, char** argv)
 	glutCreateWindow("TP2 - Sistema Solar");
 	glShadeModel(GL_SMOOTH);
 	Inicializa();
+	imprimirInstrucoes();
+    imprimirEstados();
 	glutDisplayFunc(Desenha);
 	glutReshapeFunc(AlteraTamanhoJanela);
 	glutKeyboardFunc(teclado);
