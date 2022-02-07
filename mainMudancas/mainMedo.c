@@ -180,7 +180,7 @@ void imprimirInstrucoes(){
     printf("Pressione 'I' para mudar o tipo de iluminacao (posicao) da fonte de luz (Caso a iluminacao esteja ligada)\n");
     printf("Pressione 's' para ativar ou desativar a iluminacao do Sol (Caso a iluminacao da fonte de luz esteja desligada)\n");
     printf("Pressione 'p' para pausar ou despausar a animacao\n");
-    printf("Pressione 'z' para mostrar ou esconder os nomes dos planetas e dos satelites naturais (Recomenda-se que a iluminacao esteja desligada)\n");
+    printf("Pressione 'z' para mostrar ou esconder os nomes dos planetas e dos satelites naturais (Melhor com iluminacao desligada)\n");
     printf("Pressione 'o' para mostrar ou esconder as orbitas dos planetas\n");
     printf("Pressione 'a' para ativar ou desativar o plano orbital\n");
 }
