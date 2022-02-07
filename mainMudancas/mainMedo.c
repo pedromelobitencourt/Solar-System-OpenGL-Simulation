@@ -7,8 +7,8 @@
 #include "carregartextura.h" //Biblioteca para carregar texturas 3D
 #include <stdlib.h>
 
-#define LARGURA 750 //Ver se está usando
-#define ALTURA 500 //Ver se está usando
+//#define LARGURA 750 //Ver se está usando
+//#define ALTURA 500 //Ver se está usando
 #define INCREMENTO_PLANO 0.7
 
 //Pedro Vitor Melo Bitencourt, Rafael Pereira Duarte e Pedro Veloso Inácio de Oliveira
@@ -35,7 +35,6 @@
 'UP' -> Camera1
 'DOWN' -> Camera4
 'LEFT' -> Camera2
-'RIGHT' -> Camera3 //Tem que colocar
 'MOUSE ESQUERDO' -> +Zoom
 'MOUSE DIREITO' -> -Zoom
 */
@@ -151,23 +150,35 @@ bool verOrbitas = true; //Mostrar ou esconder orbitas
 bool comLuzDoSolOn = false; //Pode ser ativado quando a iluminação está desligada
 bool planoOrbitalAtivado = false; //Mostrar ou esconder plano orbital
 bool iluminacaoEstaLigada = false; //Ligar ou desligar iluminação
-int tipoIluminacao = 0; //Há três tipos de iluminações que pode ver quando a iluminação está desligada
+int tipoIluminacao = 0; //Há três tipos de iluminações que pode ver quando a iluminação está desligar
 
-///Visitar os planetas
 
-bool olharMercurio = false;
-bool olharVenus = false;
-bool olharTerra = false;
-bool olharMarte = false;
-bool olharJupiter = false;
-bool olharSaturno = false;
-bool olharUranos = false;
-bool olharNetuno = false;
+///Função para exibir as instruções no prompt de comando (Vai limpar a tela sempre que for chamado)
+//Vai ser chamado junto com a função imprimirEstados()
 
 void imprimirInstrucoes(){
     system("cls"); //Limpar a tela do prompt
     printf("Pressione 'SETA PARA CIMA' para se deslocar para a camera1\n");
+    printf("Pressione 'SETA PARA ESQUERDA' para se deslocar para a camera2\n");
+    printf("Pressione 'SETA PARA BAIXO' para se deslocar para a camera3\n");
+    printf("Pressione 'PAGE UP' para mover a camera no eixo X positivo\n");
+    printf("Pressione 'PAGE DOWN' para mover a camera no eixo X negativo\n");
+    printf("Pressione 'F1' para mover a camera no eixo Y positivo\n");
+    printf("Pressione 'F2' para mover a camera no eixo Y negativo\n");
+    printf("Pressione 'HOME' para mover a camera no eixo Z positivo\n");
+    printf("Pressione 'END' para mover a camera no eixo Z negativo\n");
+    printf("Pressione 'BOTAO ESQUERDO DO MOUSE' para dar ZOOM IN\n");
+    printf("Pressione 'BOTAO DIREITO DO MOUSE' para dar ZOOM OUT\n");
+    printf("Pressione 'i' para ativar ou desativar a iluminacao da fonte de luz\n");
+    printf("Pressione 'I' para mudar o tipo de iluminacao (posicao) da fonte de luz\n");
+    printf("Pressione 's' para ativar ou desativar a iluminacao do Sol (Caso a iluminacao da fonte de luz esteja desligada)\n");
+    printf("Pressione 'p' para pausar ou despausar a animacao\n");
+    printf("Pressione 'z' para mostrar ou esconder os nomes dos planetas e satelites naturais\n");
+    printf("Pressione 'o' para mostrar ou esconder as orbitas dos planetas\n");
+    printf("Pressione 'a' para ativar ou desativar o plano orbital\n");
 }
+
+///Função que vai imprimir os estados de algumas variáveis (Será chamada após a função imprimirInstrucoes())
 
 void imprimirEstados(){
     printf("\n");
@@ -182,6 +193,48 @@ void imprimirEstados(){
     }
     else{
         printf("Iluminacao: desligada\n");
+    }
+    if(comLuzDoSolOn){
+        printf("Iluminacao do Sol: ligada\n");
+    }
+    else{
+        printf("Iluminacao do Sol: desligada\n");
+    }
+    if(tipoIluminacao == 0){
+        printf("Tipo de iluminacao: 0\n");
+    }
+    else if(tipoIluminacao == 1){
+        printf("Tipo de iluminacao: 1\n");
+    }
+    else{
+        printf("Tipo de iluminacao: 2\n");
+    }
+    if(camera2Ligada){
+        printf("Camera: 2\n");
+    }
+    if(camera1Ligada){
+        printf("Camera: 1\n");
+    }
+    if(camera4Ligada){
+        printf("Camera: 3\n");
+    }
+    if(mostrarNomesPlanetas){
+        printf("Mostrar nomes dos planetas e satelites naturais: Ligado\n");
+    }
+    else{
+        printf("Mostrar nomes dos planetas e satelites naturais: Desligado\n");
+    }
+    if(verOrbitas){
+        printf("Ver orbitas: ligado\n");
+    }
+    else{
+        printf("Ver orbitas: desligado\n");
+    }
+    if(planoOrbitalAtivado){
+        printf("Plano orbital: ativado\n");
+    }
+    else{
+        printf("Plano orbital: desativado\n");
     }
 }
 
@@ -460,7 +513,7 @@ void desenharSkyboxes(){
     }
 }
 
-void desenharEsfera(double raio, double distancia, double inclinacaoX, double anguloRotacaoNoProprioEixo, double orbita, char *nome, bool verEsfera){
+void desenharEsfera(double raio, double distancia, double inclinacaoX, double anguloRotacaoNoProprioEixo, double orbita, char *nome){
 
     glPushMatrix(); //Sistema padrão de coordenadas
     glColor3f(0, 1, 0);
@@ -471,28 +524,6 @@ void desenharEsfera(double raio, double distancia, double inclinacaoX, double an
     glRotatef(anguloRotacaoNoProprioEixo, 0, 1, 0); //Movimento de rotação
     glRotatef(90, 1, 0, 0);
     glPushMatrix();
-
-    if(verEsfera){
-        //glPushMatrix();
-        //double z = -sin(orbita * 180 * 3.1415) + distancia;
-        double z = distancia * sin(((orbita) * 3.141592) / 180);
-        //double x = -sin(orbita * 180 * 3.1415) + distancia;
-        double x = distancia * cos(((orbita) * 3.141592) / 180);
-        double y = -sin(orbita * 180 * 3.1415);
-        //posicaoCameraX = raio + distanciaDoPlaneta;
-        posicaoCameraX = 1.4 * x;
-        posicaoCameraY = 0;
-        posicaoCameraZ = z * 1.4;
-        posicaoOlharZ = 0;
-        posicaoOlharY = 0;
-        posicaoOlharX = 0;
-        //posicaoOlharX = distancia - raio;
-        //posicaoCameraY = 0;
-        //posicaoCameraZ = 0;
-        //posicaoOlharZ = 0;
-        //posicaoOlharY = 0;
-        //posicaoOlharX = 0;
-    }
 
     ///Atribuindo textura
 
@@ -700,13 +731,11 @@ void desenharSatelitesNaturais(double raio, double distancia, double inclinacaoX
     glRotatef(orbita, 0, 1, 0);
     glTranslatef(planetaMae.distanciaAteOSol, 0, 0);
 
-    glRotatef(planetaMae.anguloRotacaoNoProprioEixo, 0, 1, 0);  //Temos que ver qual é melhor
-    //glRotatef(orbita, 0, 1, 0);                               //o segundo Rotacionar deve ser o angulo do planetaMae primeiro ou a orbita
+    glRotatef(planetaMae.anguloRotacaoNoProprioEixo, 0, 1, 0);
 
     glTranslatef(distancia - planetaMae.distanciaAteOSol, 0, 0);
 
     glRotatef(orbita, 0, 1, 0);
-    //glRotatef(planetaMae.anguloRotacaoNoProprioEixo, 0, 1, 0);
 
     glPushMatrix();
 
@@ -918,18 +947,18 @@ void Desenha(void)
         desenharOrbitas();
     }
 
-	desenharEsfera(mercurio.raio, mercurio.distanciaAteOSol, mercurio.inclinacaoX, mercurio.anguloRotacaoNoProprioEixo, mercurio.orbita, mercurio.nome, olharMercurio);
-	desenharEsfera(venus.raio, venus.distanciaAteOSol, venus.inclinacaoX, venus.anguloRotacaoNoProprioEixo, venus.orbita, venus.nome, olharVenus);
-	desenharEsfera(terra.raio, terra.distanciaAteOSol, terra.inclinacaoX, terra.anguloRotacaoNoProprioEixo, terra.orbita, terra.nome, olharTerra);
+	desenharEsfera(mercurio.raio, mercurio.distanciaAteOSol, mercurio.inclinacaoX, mercurio.anguloRotacaoNoProprioEixo, mercurio.orbita, mercurio.nome);
+	desenharEsfera(venus.raio, venus.distanciaAteOSol, venus.inclinacaoX, venus.anguloRotacaoNoProprioEixo, venus.orbita, venus.nome);
+	desenharEsfera(terra.raio, terra.distanciaAteOSol, terra.inclinacaoX, terra.anguloRotacaoNoProprioEixo, terra.orbita, terra.nome);
 	desenharSatelitesNaturais(lua.raio, lua.distanciaAteOSol, lua.inclinacaoX, lua.anguloRotacaoNoProprioEixo, lua.orbita, lua.nome, terra);
-	desenharEsfera(marte.raio, marte.distanciaAteOSol, marte.inclinacaoX, marte.anguloRotacaoNoProprioEixo, marte.orbita, marte.nome, olharMarte);
+	desenharEsfera(marte.raio, marte.distanciaAteOSol, marte.inclinacaoX, marte.anguloRotacaoNoProprioEixo, marte.orbita, marte.nome);
 	desenharSatelitesNaturais(phobos.raio, phobos.distanciaAteOSol, phobos.inclinacaoX, phobos.anguloRotacaoNoProprioEixo, phobos.orbita, phobos.nome, marte);
-	desenharEsfera(jupiter.raio, jupiter.distanciaAteOSol, jupiter.inclinacaoX, jupiter.anguloRotacaoNoProprioEixo, jupiter.orbita, jupiter.nome, olharJupiter);
-	desenharEsfera(saturno.raio, saturno.distanciaAteOSol, saturno.inclinacaoX, saturno.anguloRotacaoNoProprioEixo, saturno.orbita, saturno.nome, olharSaturno);
+	desenharEsfera(jupiter.raio, jupiter.distanciaAteOSol, jupiter.inclinacaoX, jupiter.anguloRotacaoNoProprioEixo, jupiter.orbita, jupiter.nome);
+	desenharEsfera(saturno.raio, saturno.distanciaAteOSol, saturno.inclinacaoX, saturno.anguloRotacaoNoProprioEixo, saturno.orbita, saturno.nome);
 	desenharSatelitesNaturais(titan.raio, titan.distanciaAteOSol, titan.inclinacaoX, titan.anguloRotacaoNoProprioEixo, titan.orbita, titan.nome, saturno);
-	desenharEsfera(uranos.raio, uranos.distanciaAteOSol, uranos.inclinacaoX, uranos.anguloRotacaoNoProprioEixo, uranos.orbita, uranos.nome, olharUranos);
-	desenharEsfera(netuno.raio, netuno.distanciaAteOSol, netuno.inclinacaoX, netuno.anguloRotacaoNoProprioEixo, netuno.orbita, netuno.nome, olharNetuno);
-	desenharEsfera(sol.raio, sol.distanciaAteOSol, sol.inclinacaoX, sol.anguloRotacaoNoProprioEixo, sol.orbita, sol.nome, false);
+	desenharEsfera(uranos.raio, uranos.distanciaAteOSol, uranos.inclinacaoX, uranos.anguloRotacaoNoProprioEixo, uranos.orbita, uranos.nome);
+	desenharEsfera(netuno.raio, netuno.distanciaAteOSol, netuno.inclinacaoX, netuno.anguloRotacaoNoProprioEixo, netuno.orbita, netuno.nome);
+	desenharEsfera(sol.raio, sol.distanciaAteOSol, sol.inclinacaoX, sol.anguloRotacaoNoProprioEixo, sol.orbita, sol.nome);
 
     for(int i =0;i<numAsteroides;i++){
         desenharAsteroides(asteroide[i].distancia, asteroide[i].rotacao, asteroide[i].tipo);
@@ -966,7 +995,6 @@ void EspecificaParametrosVisualizacao(void){
 	glLoadIdentity();
 
 	// Especifica posição do observador e do alvo
-	//gluLookAt(obsX, obsY, obsZ, 0, 0, 0, 0, 1, 0);
 	gluLookAt(posicaoCameraX, posicaoCameraY, posicaoCameraZ, posicaoOlharX, posicaoOlharY, posicaoOlharZ, 0, 1, 0);
 }
 
@@ -1307,8 +1335,7 @@ void teclado(unsigned char key, int x, int y) {
            if(animacaoOn == true){
                 animacaoOn = false;
            }
-           else if(animacaoOn == false && olharJupiter == false && olharMarte == false && olharMercurio == false && olharNetuno == false
-                   && olharSaturno == false && olharTerra == false && olharUranos == false && olharVenus == false){
+           else if(animacaoOn == false){
                 animacaoOn = true;
            }
            imprimirInstrucoes();
@@ -1322,41 +1349,9 @@ void teclado(unsigned char key, int x, int y) {
            else{
                 mostrarNomesPlanetas = true;
            }
+           imprimirInstrucoes();
+           imprimirEstados();
         break;
-
-       case 49: //1
-            if(olharMercurio){
-                olharMercurio = false;
-                posicaoCameraX = posicaoCameraX_antigo;
-                posicaoCameraY = posicaoCameraY_antigo;
-                posicaoCameraZ = posicaoCameraZ_antigo;
-            }
-            else{
-                olharMercurio = true;
-                posicaoCameraX_antigo = posicaoCameraX;
-                posicaoCameraY_antigo = posicaoCameraY;
-                posicaoCameraZ_antigo = posicaoCameraZ;
-                animacaoOn = false;
-                olharVenus = false;
-            }
-        break;
-
-       case 50: //2
-            if(olharVenus){
-                olharMercurio = false;
-                posicaoCameraX = posicaoCameraX_antigo;
-                posicaoCameraY = posicaoCameraY_antigo;
-                posicaoCameraZ = posicaoCameraZ_antigo;
-            }
-            else{
-                olharVenus = true;
-                posicaoCameraX_antigo = posicaoCameraX;
-                posicaoCameraY_antigo = posicaoCameraY;
-                posicaoCameraZ_antigo = posicaoCameraZ;
-                animacaoOn = false;
-                olharMercurio = false;
-            }
-            break;
 
        case 'i':
             if(iluminacaoEstaLigada){
@@ -1366,6 +1361,8 @@ void teclado(unsigned char key, int x, int y) {
             else{
                 iluminacaoEstaLigada = true;
             }
+            imprimirInstrucoes();
+            imprimirEstados();
             break;
 
        case 'I':
@@ -1375,6 +1372,8 @@ void teclado(unsigned char key, int x, int y) {
                     tipoIluminacao = 0;
                 }
            }
+           imprimirInstrucoes();
+           imprimirEstados();
             break;
 
        case 'o':
@@ -1384,6 +1383,8 @@ void teclado(unsigned char key, int x, int y) {
         else{
             verOrbitas = true;
         }
+        imprimirInstrucoes();
+        imprimirEstados();
         break;
 
        case 's':
@@ -1393,6 +1394,8 @@ void teclado(unsigned char key, int x, int y) {
         else if(!comLuzDoSolOn && !iluminacaoEstaLigada){
             comLuzDoSolOn = true;
         }
+        imprimirInstrucoes();
+        imprimirEstados();
         break;
 
        case 'a':
@@ -1402,6 +1405,8 @@ void teclado(unsigned char key, int x, int y) {
         else{
             planoOrbitalAtivado = true;
         }
+        imprimirInstrucoes();
+        imprimirEstados();
         break;
    }
 
@@ -1417,6 +1422,8 @@ void teclasEspeciais(int key, int x, int y){ //Função que nos permite usar tec
         posicaoOlharX = 0;
         posicaoOlharY = 0;
         posicaoOlharZ = 0;
+        imprimirInstrucoes();
+        imprimirEstados();
     }
     if(key == GLUT_KEY_DOWN){
         camera4Ligada = true;
@@ -1426,6 +1433,8 @@ void teclasEspeciais(int key, int x, int y){ //Função que nos permite usar tec
         posicaoOlharX = 0;
         posicaoOlharY = 0;
         posicaoOlharZ = 0;
+        imprimirInstrucoes();
+        imprimirEstados();
     }
     if(key == GLUT_KEY_LEFT){
         camera4Ligada = false;
@@ -1435,6 +1444,8 @@ void teclasEspeciais(int key, int x, int y){ //Função que nos permite usar tec
         posicaoOlharX = 0;
         posicaoOlharY = 0;
         posicaoOlharZ = 0;
+        imprimirInstrucoes();
+        imprimirEstados();
     }
     if(key == GLUT_KEY_HOME){
         if(posicaoOlharZ < 100){
