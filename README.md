@@ -76,12 +76,3 @@
 'MOUSE ESQUERDO' -> +Zoom;
 
 'MOUSE DIREITO' -> -Zoom;
-
-
-///Código com implementação que olha os planetas - Não tá completo
-
-'1' -> Ver ou desver Mercúrio;
-
-'2' -> Ver ou desver Venus;
-
-... //Criar
