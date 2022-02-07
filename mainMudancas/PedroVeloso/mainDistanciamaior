@@ -298,7 +298,7 @@ void Inicializa (void){
     phobos.nome = "Phobos";
     phobos.velocidadeRotacao = marte.velocidadeRotacao;
 
-    jupiter.distanciaAteOSol = 28+12;
+    jupiter.distanciaAteOSol = 28+16;
     jupiter.inclinacaoX = 3.13;
     jupiter.raio = 3.5;
     jupiter.velocidadeDaOrbita = 1.31;
@@ -307,7 +307,7 @@ void Inicializa (void){
     jupiter.nome = "Jupiter";
     jupiter.velocidadeRotacao = 58.32;
 
-    saturno.distanciaAteOSol = 37+12;
+    saturno.distanciaAteOSol = 40+16;
     saturno.inclinacaoX = 26.7;
     saturno.raio = 3;
     saturno.velocidadeDaOrbita = 0.97;
@@ -327,7 +327,7 @@ void Inicializa (void){
     titan.velocidadeRotacao = saturno.velocidadeRotacao;
 
 
-    uranos.distanciaAteOSol = 45.5+12;
+    uranos.distanciaAteOSol = 49.5+16;
     uranos.inclinacaoX = 47;
     uranos.raio = 2.5;
     uranos.velocidadeDaOrbita = 0.68;
@@ -336,7 +336,7 @@ void Inicializa (void){
     uranos.nome = "Urano";
     uranos.velocidadeRotacao = 34.3;
 
-    netuno.distanciaAteOSol = 53.6+12;
+    netuno.distanciaAteOSol = 58.6+16;
     netuno.inclinacaoX = 28.32;
     netuno.raio = 2.3;
     netuno.velocidadeDaOrbita = 0.54;
