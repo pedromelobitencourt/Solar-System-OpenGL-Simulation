@@ -29,8 +29,6 @@ Texturas usadas:
 'o' -> Ver ou esconder as órbitas dos planetas
 'I' -> Mudar o tipo de iluminação (Caso a iluminação esteja ligada)
 'i' -> Ligar ou desligar a iluminação
-'1' -> Ver ou desver Mercúrio
-'2' -> Ver ou desver Venus
 'z' -> Mostrar ou esconder os nomes dos planetas
 'p' -> Pausar ou despausar a animação
 'F1' -> Mexer a câmera Y
@@ -99,7 +97,7 @@ struct Asteroide{
     double distancia;
     double rotacao;
     double velocidadeRotacao;
-    int tipo; //Se 1 == icosaedro, Se 2 == dodecaedro, Se 3 octaedro
+    int tipo; //Se 1 == icosaedro, Se 2 == dodecaedro, Se 3 == octaedro
 };
 
 ///Criando os asteroides
@@ -142,8 +140,6 @@ GLdouble incrementoZ = 1;
 GLdouble posicaoCameraX_antigo;
 GLdouble posicaoCameraY_antigo;
 GLdouble posicaoCameraZ_antigo;
-
-GLdouble distanciaDoPlaneta = 5; //Ver se está usando
 
 ///Estados
 
@@ -429,7 +425,7 @@ void Inicializa (void){
 
     /// Asteroides
 
-    //A distância dos asteroides deve ficar entre dois planetas - Talvez vao ter que aumentar a distância do sol de alguns planetas
+    //A distância dos asteroides deve ficar entre dois planetas
     //Bom ter rotações diferentes para não ter muito asteroide sincronizado
     //Tipo1 => Icosaedro
     //Tipo2 => Dodecaedro
@@ -569,7 +565,7 @@ void desenharEsfera(double raio, double distancia, double inclinacaoX, double an
         }
 
     else if(strcmp(nome, "Venus") == 0){
-        //texturaSuperficieTerra
+        //texturaSuperficieVenus
 
         GLUquadric *quadric = gluNewQuadric();
         glEnable(GL_TEXTURE_2D);
@@ -762,11 +758,9 @@ void desenharSatelitesNaturais(double raio, double distancia, double inclinacaoX
         gluSphere(quadric, raio, 20, 20);
         glDisable(GL_TEXTURE_2D);
     }
-
-    //hmm
-
-    glutSolidSphere(raio, 180, 180);
-
+    else{
+        glutSolidSphere(raio, 180, 180);
+    }
     glPopMatrix();
 
     //Mostrando nome dos satélites naturais
