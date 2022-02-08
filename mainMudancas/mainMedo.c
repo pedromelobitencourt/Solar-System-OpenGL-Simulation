@@ -18,7 +18,6 @@ Texturas usadas:
 #include <stdio.h> //Digitar as intruções no prompt de comando
 #include <string.h>
 #include "carregartextura.h" //Biblioteca para carregar texturas 3D
-#include <stdlib.h> //para o system("cls")
 #define INCREMENTO_PLANO 0.7
 
 ///Instruções
@@ -160,7 +159,7 @@ int tipoIluminacao = 0; //Há três tipos de iluminações que pode ver quando a
 //Vai ser chamado junto com a função imprimirEstados()
 
 void imprimirInstrucoes(){
-    system("cls"); //Limpar a tela do prompt
+    printf("\n//////////////////////////////////////////////////////////////////////////////////////////////////////\n");
     printf("Pressione 'SETA PARA CIMA' para se deslocar para a camera1\n");
     printf("Pressione 'SETA PARA ESQUERDA' para se deslocar para a camera2\n");
     printf("Pressione 'SETA PARA BAIXO' para se deslocar para a camera3\n");
