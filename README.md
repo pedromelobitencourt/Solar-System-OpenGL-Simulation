@@ -1,7 +1,5 @@
 # TP2_ultimasAlteracoesNaoOficiais
 
-## Pedro Vitor Melo Bitencourt
-
 
 
 
