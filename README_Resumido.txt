@@ -4,10 +4,10 @@
 2°: Copie o código do arquivo "main.c" do projeto baixado
 3°: Apague todo o código da main do projeto criado
 4°: Cole o código copiado na main do projeto criado
-5°: Crie um arquivo denominado "carregartextura.h" no projeto criado
+5°: Crie um arquivo denominado "carregartextura.h" no projeto criado (Caso pergunte se o arquivo criado pertence ao projeto criado, marque "Sim")
 6°: Copie o código do arquivo "carregartextura.h" do projeto baixado
 7°: Cole o código copiado no passo anterior no arquivo "carregartextura.h" do projeto criado
-8°: Crie um arquivo denominado "carregartextura.cpp" no projeto criado
+8°: Crie um arquivo denominado "carregartextura.cpp" no projeto criado (Caso pergunte se o arquivo criado pertence ao projeto criado, marque "Sim")
 9°: Copie o código do arquivo "carregartextura.cpp" do projeto baixado
 10°: Cole o código copiado no passo anterior no arquivo "carregartextura.cpp" do projeto criado
 11°: Coloque as imagens da pasta "Texturas" do projeto baixado na pasta onde fica o executável do projeto criado no seu sistema operacional (Normalmente em PastaDoProjeto/Bin/Debug)
