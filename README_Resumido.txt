@@ -1,3 +1,12 @@
+***Alunos do grupo:
+  Pedro Vitor Melo Bitencourt (20213001540)
+  Rafael Pereira Duarte (20213005146)
+  Pedro Veloso Inácio da Silva (20213004837)
+  Sérgio Henrique Mendes de Assis (20213005182)
+
+***Orientador:
+  Glender Brás
+
 ***Instruções para compilar e executar o código:
 
 1°: Crie um projeto do tipo glut no CodeBlocks
