@@ -62,3 +62,14 @@
 14) Caso a iluminação esteja ativada, pode alternar em três tipos de iluminação, pressionando "I"
 15) Caso a iluminação esteja desligada, pode ligar ou desligar a luz emitida pela estrela (Sol)
 16) Pode-se mexer o "olhar da câmera", acionando algumas teclas
+
+***O código para carregar texturas 3D no OpenGL foi baseado no seguinte código:
+http://www.codeincodeblock.com/2012/05/simple-method-for-texture-mapping-on.html
+
+***Referências:
+
+SOLAR SYSTEM SCOPE, Solar Textures. Disponível em: https://www.solarsystemscope.com/textures/. Acesso em: 1 fev. 2022.
+
+GOUARD, M.	High Resolution Map of Earth Throughout.  Disponível em: https://br.pinterest.com/pin/686728643171417479/. Acesso em: 1 fev. 2022.
+
+
