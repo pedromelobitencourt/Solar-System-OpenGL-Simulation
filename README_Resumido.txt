@@ -72,4 +72,4 @@ SOLAR SYSTEM SCOPE, Solar Textures. Disponível em: https://www.solarsystemscope
 
 GOUARD, M.	High Resolution Map of Earth Throughout.  Disponível em: https://br.pinterest.com/pin/686728643171417479/. Acesso em: 1 fev. 2022.
 
-
+CODE IN CODE BLOCKS, Simple method for texture mapping on sphere Using gluSphere and gluQuadricTexture in OpenGL. 2012.  Disponível em: http://www.codeincodeblock.com/2012/05/simple-method-for-texture-mapping-on.html. Acesso em: 1 fev. 2022.
