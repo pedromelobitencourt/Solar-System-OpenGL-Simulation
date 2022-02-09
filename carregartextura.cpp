@@ -1,3 +1,17 @@
+/*
+Membros do grupo:
+    Pedro Vitor Melo Bitencourt (20213001540)
+    Rafael Pereira Duarte (20213005146)
+    Pedro Veloso Inácio de Oliveira (20213004837)
+    Sérgio Henrique Mendes de Assis (20213005182)
+
+Orientador:
+    Glender Brás
+
+Texturas usadas:
+    https://www.solarsystemscope.com/textures/
+*/
+
 #include <assert.h>
 #include <fstream>
 #include "carregartextura.h"
@@ -133,4 +147,3 @@ Textura* carregarImagemBMP(const char* nomeArquivo) {
 	entradaArquivo.close();
 	return new Textura(pixels2.release(), larguraDaImagem, alturaDaImagem);
 }
-
