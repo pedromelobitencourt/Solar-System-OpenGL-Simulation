@@ -1,7 +1,5 @@
 # Solar System OpenGL Simulation
 
-![Solar System Demo][(solar_system_demo.gif](https://www.google.com/url?sa=i&url=https%3A%2F%2Fbestanimations.com%2FEarth%26Space%2FSolarSystem%2FSolar-System.html&psig=AOvVaw2lu_W6ifwURqyxvg4DBkIW&ust=1693090099483000&source=images&cd=vfe&opi=89978449&ved=0CBAQjRxqFwoTCODlxqHy-IADFQAAAAAdAAAAABAJ))
-
 ## Project Setup
 
 1. Create a GLUT project in CodeBlocks.
